@@ -32,6 +32,7 @@ https://www.youtube.com/watch?v=U7lf_E79j7Q
 
 
 float gX, gY, gZ; //anglespeed readings of the gyro
+float aX, aY, aZ; //acceleration
 float actX, actY, actZ; //actual angles
 float corrValX, corrValY, corrValZ; //correction values for correcting the readings
 
@@ -44,7 +45,7 @@ void inititalizeGyroscope()
   corrValX = 0;
   corrValY = 0;
   corrValZ = 0;
-  
+
   for (int i = 0; i < 1000; i++)
   { 
     float xRaw, yRaw, zRaw;
@@ -57,6 +58,11 @@ void inititalizeGyroscope()
   corrValY = corrValY / 1000;
   corrValZ = corrValZ / 1000;
 
+}
+
+void readAccelerometer()
+{
+ IMU.readAccel(aX,aY,aZ);
 }
 
 //Method to read the gyro and subtract the correction-values
@@ -85,10 +91,16 @@ void calculateGyroAxisAngles()
   actZ = actZ + zChange;
 }
 
-//Method to display the actual angles
-void displayGyroAxisAngles()
+//string to display the actual angles
+String gyroAxisAnglesText()
 {
-  Serial.println("GYRO ANGLES:  X" + String(actX) + "X Y" + String(actY) + "Y Z" + String(actZ) + "Z");
+  return "GYRO ANGLES:  X" + String(actX) + "X Y" + String(actY) + "Y Z" + String(actZ) + "Z";
+}
+
+//string to display the acceleration
+String accelerationText()
+{
+  return "ACCELERATION:  X" + String(aX) + "X Y" + String(aY) + "Y Z" + String(aZ) + "Z";
 }
 
 void setup() 
@@ -124,6 +136,8 @@ void setup()
 void loop() 
 {  
   readCorrectedGyro();
+  readAccelerometer();
   calculateGyroAxisAngles();
-  displayGyroAxisAngles();
+  Serial.println( gyroAxisAnglesText() + " ||||| " + accelerationText());
+ 
 }
