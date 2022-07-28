@@ -18,7 +18,7 @@ https://www.youtube.com/watch?v=U7lf_E79j7Q
   Created by Riccardo Rizzo
 
 
-  Modified by Benjamin Dannegård
+  Modified by Benjamin Dannegï¿½rd
 
   30 Nov 2020
 
@@ -31,67 +31,99 @@ https://www.youtube.com/watch?v=U7lf_E79j7Q
 #include <Arduino_LSM9DS1.h>
 
 
-float x, y, z;
-float actX;
-float corrValX;
-float tick = 10;
+float gX, gY, gZ; //anglespeed readings of the gyro
+float actX, actY, actZ; //actual angles
+float corrValX, corrValY, corrValZ; //correction values for correcting the readings
+
 long lastTime;
 
-int plusThreshold = 30, minusThreshold = -30;
 
+//Method to calculate the correction-values for each axis
+void inititalizeGyroscope()
+{
+  corrValX = 0;
+  corrValY = 0;
+  corrValZ = 0;
+  
+  for (int i = 0; i < 1000; i++)
+  { 
+    float xRaw, yRaw, zRaw;
+    IMU.readRawGyro(xRaw,yRaw, zRaw);
+    corrValX += xRaw;
+    corrValY += yRaw;
+    corrValZ += zRaw;
+  }
+  corrValX = corrValX / 1000;
+  corrValY = corrValY / 1000;
+  corrValZ = corrValZ / 1000;
 
-void setup() {
+}
 
+//Method to read the gyro and subtract the correction-values
+void readCorrectedGyro()
+{
+  if (IMU.gyroscopeAvailable()) 
+  {
+    IMU.readGyro(gX,gY,gZ);
+    gX -= corrValX;
+    gY -= corrValY;
+    gZ -= corrValZ;
+  }
+}
+
+//Method to calculate the actual angles (time * speed) not accurate
+void calculateGyroAxisAngles()
+{
+  long currenTime = millis();
+  long deltaT = currenTime- lastTime;
+  float xChange = (gX/1000)*deltaT;
+  float yChange = (gY/1000)*deltaT;
+  float zChange = (gZ/1000)*deltaT;
+  lastTime = currenTime;
+  actX = actX + xChange;
+  actY = actY + yChange;
+  actZ = actZ + zChange;
+}
+
+//Method to display the actual angles
+void displayGyroAxisAngles()
+{
+  Serial.println("GYRO ANGLES:  X" + String(actX) + "X Y" + String(actY) + "Y Z" + String(actZ) + "Z");
+}
+
+void setup() 
+{
   Serial.begin(9600);
 
   while (!Serial);
 
   Serial.println("Started");
 
-
-  if (!IMU.begin()) {
-
+  if (!IMU.begin()) 
+  {
     Serial.println("Failed to initialize IMU!");
-
     while (1);
   }
 
-  Serial.print("Gyroscope sample rate = ");
   IMU.setGyroODR(5);
 
+  Serial.print("Gyroscope sample rate = ");
   Serial.print(IMU.getGyroODR());
-
   Serial.println(" Hz");
-
   Serial.println();
-
   Serial.println("Gyroscope in degrees/second");
 
   actX = 0;
+  actY = 0;
+  actZ = 0;
   lastTime = millis();
 
-  for (int i = 0; i < 500; i++)
-  {
-    float xRaw, yRaw, zRaw;
-    IMU.readRawGyro(xRaw,yRaw, zRaw);
-    corrValX = corrValX +  xRaw;
-  }
-  Serial.println(corrValX);
-  corrValX = corrValX / 500;
-  IMU.setGyroOffset(corrValX, 0, 0);
+  inititalizeGyroscope(); 
 }
 
-void loop() {  
-
-  if (IMU.gyroscopeAvailable()) {
-
-    IMU.readGyro(x,y,z);
-  }
-  long currenTime = millis();
-  long deltaT = currenTime- lastTime;
-  float xChange = (x/1000)*deltaT;
-  lastTime = currenTime;
-  actX = actX + xChange;
-  Serial.println(actX);
-
+void loop() 
+{  
+  readCorrectedGyro();
+  calculateGyroAxisAngles();
+  displayGyroAxisAngles();
 }
