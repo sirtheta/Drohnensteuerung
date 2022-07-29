@@ -1,52 +1,35 @@
 /*
-
-  Arduino LSM9DS1 - Gyroscope Application
-
-
-  This example reads the gyroscope values from the LSM9DS1 sensor 
-
-  and prints them to the Serial Monitor or Serial Plotter, as a directional detection of 
-
-  an axis' angular velocity.
-
-https://www.youtube.com/watch?v=U7lf_E79j7Q
-  The circuit:
-
-  - Arduino Nano 33 BLE Sense
-
-
-  Created by Riccardo Rizzo
-
-
-  Modified by Benjamin Danneg�rd
-
-  30 Nov 2020
-
-
-  This example code is in the public domain.
-
+  INSERT MEANINGFULL COMMENT HERE :)
 */
 
-
 #include <Arduino_LSM9DS1.h>
+#include <vector_type.h>
 
 
 float gX, gY, gZ; //anglespeed readings of the gyro
-float aX, aY, aZ; //acceleration
-float actX, actY, actZ; //actual angles
+vec3_t accelVect = {0,0,0}; //acceleration readings
+vec3_t accelAngl = {0,0,0}; //calculated acceleration angles
+
+vec3_t startVect = {0,0,0}; //acceleration vector at start
+
+vec3_t gyroVect = {0,0,0}; //gyro vector (gets rotated based on anglespeed)
+vec3_t gyroAngl = {0,0,0}; //gyro vector angles
+vec3_t gyroDirAngl = {90,90,0}; //gyro angles calculated directly by anglespeed
 float corrValX, corrValY, corrValZ; //correction values for correcting the readings
 
-long lastTime;
+float pi = 3.141592;
+
+long lastTime; //used to calculate the rotation
 
 
 //Method to calculate the correction-values for each axis
-void inititalizeGyroscope()
+void inititalizeGyroscope(int _sampleSize)
 {
   corrValX = 0;
   corrValY = 0;
   corrValZ = 0;
 
-  for (int i = 0; i < 1000; i++)
+  for (int i = 0; i < _sampleSize; i++)
   { 
     float xRaw, yRaw, zRaw;
     IMU.readRawGyro(xRaw,yRaw, zRaw);
@@ -54,15 +37,70 @@ void inititalizeGyroscope()
     corrValY += yRaw;
     corrValZ += zRaw;
   }
-  corrValX = corrValX / 1000;
-  corrValY = corrValY / 1000;
-  corrValZ = corrValZ / 1000;
+  corrValX = corrValX / _sampleSize;
+  corrValY = corrValY / _sampleSize;
+  corrValZ = corrValZ / _sampleSize;
 
+}
+
+//copies the accelerationvector on startup as startvector 
+void initializeStartVector()
+{
+ IMU.readAccel(startVect.x,startVect.y,startVect.z);
+ startVect = startVect.norm();
+ gyroVect = startVect;
+}
+
+//method to rotate a given vector by some angles x,y,z
+void rotateVector(vec3_t* _vect, vec3_t _ang)
+{
+
+  /*
+  ROTATING AROUND Z-AXIS:
+    |cos θ   −sin θ    0| |x|   |x cos θ − y  sin θ|   |x'|
+    |sin θ    cos θ    0| |y| = |x sin θ + y  cos θ| = |y'|
+    |  0       0       1| |z|   |        z         |   |z'|
+
+  ROTATING AROUND Y-AXIS:
+    | cos θ    0   sin θ| |x|   | x cos θ + z sin θ|   |x'|
+    |   0      1       0| |y| = |         y        | = |y'|
+    |−sin θ    0   cos θ| |z|   |−x sin θ + z cos θ|   |z'|
+
+  ROTATING AROUND X-AXIS:
+    |1     0           0| |x|   |        x         |   |x'|
+    |0   cos θ    −sin θ| |y| = |y cos θ − z  sin θ| = |y'|
+    |0   sin θ     cos θ| |z|   |y sin θ + z  cos θ|   |z'|
+
+  ref: https://stackoverflow.com/questions/14607640/rotating-a-vector-in-3d-space
+  */
+ float sinZ = sinf(_ang.z);
+ float cosZ = cosf(_ang.z);
+
+ float sinY = sinf(_ang.y);
+ float cosY = cosf(_ang.y);
+
+ float sinX = sinf(_ang.x);
+ float cosX = cosf(_ang.x);
+
+  //rotate around Z-Axis:
+  /*X'*/ _vect->x =  _vect->x * cosZ - _vect->y * sinZ;
+  /*Y'*/ _vect->y =  _vect->x * sinZ + _vect->y * cosZ;
+  /*Z'*/
+
+  //rotate around Y-Axis:
+  /*X'*/ _vect->x =  _vect->x * cosY + _vect->z * sinY;
+  /*Y'*/
+  /*Z'*/ _vect->z = -_vect->x * sinY + _vect->z * cosY;
+
+  //rotate around X-Axis:
+  /*X'*/
+  /*Y'*/ _vect->y =  _vect->y * cosX - _vect->z * sinX;
+  /*Z'*/ _vect->z =  _vect->y * sinX + _vect->z * cosX;
 }
 
 void readAccelerometer()
 {
- IMU.readAccel(aX,aY,aZ);
+ IMU.readAccel(accelVect.x,accelVect.y,accelVect.z);
 }
 
 //Method to read the gyro and subtract the correction-values
@@ -75,6 +113,16 @@ void readCorrectedGyro()
     gY -= corrValY;
     gZ -= corrValZ;
   }
+ 
+}
+
+//calculate X,Y eulerangles of a given vector (in reference of axis) => we will have to change this
+void calculateAngelsOfVector(vec3_t _vectorIn, vec3_t* _anglesOut)
+{
+ _anglesOut->x = (acosf(_vectorIn.x / _vectorIn.mag())) * 180 / pi; //(*180/pi) => convert rad in degrees
+ _anglesOut->y = (acosf(_vectorIn.y / _vectorIn.mag())) * 180 / pi; //(*180/pi) => convert rad in degrees
+ _anglesOut->z = 0; //Calculation of Z rotation is not possible 
+
 }
 
 //Method to calculate the actual angles (time * speed) not accurate
@@ -86,25 +134,23 @@ void calculateGyroAxisAngles()
   float yChange = (gY/1000)*deltaT;
   float zChange = (gZ/1000)*deltaT;
   lastTime = currenTime;
-  actX = actX + xChange;
-  actY = actY + yChange;
-  actZ = actZ + zChange;
+  gyroDirAngl.x = gyroDirAngl.x + xChange;
+  gyroDirAngl.y = gyroDirAngl.y + yChange;
+  gyroDirAngl.z = gyroDirAngl.z + zChange;
+
+  vec3_t angleChange {xChange * pi / 180,yChange * pi / 180,zChange * pi / 180};
+  rotateVector(&gyroVect, angleChange);
 }
 
-//string to display the actual angles
-String gyroAxisAnglesText()
+//used to desplay a vector as readable string
+String vectorToString(vec3_t _vector)
 {
-  return "GYRO ANGLES:  X" + String(actX) + "X Y" + String(actY) + "Y Z" + String(actZ) + "Z";
-}
-
-//string to display the acceleration
-String accelerationText()
-{
-  return "ACCELERATION:  X" + String(aX) + "X Y" + String(aY) + "Y Z" + String(aZ) + "Z";
+  return "| X:" + String(_vector.x) + "| Y:" + String(_vector.y) + "| Z:" + String(_vector.z);
 }
 
 void setup() 
 {
+
   Serial.begin(9600);
 
   while (!Serial);
@@ -125,19 +171,20 @@ void setup()
   Serial.println();
   Serial.println("Gyroscope in degrees/second");
 
-  actX = 0;
-  actY = 0;
-  actZ = 0;
   lastTime = millis();
 
-  inititalizeGyroscope(); 
+  inititalizeGyroscope(1000);
+  initializeStartVector(); 
 }
 
 void loop() 
-{  
-  readCorrectedGyro();
-  readAccelerometer();
-  calculateGyroAxisAngles();
-  Serial.println( gyroAxisAnglesText() + " ||||| " + accelerationText());
+{ 
+  readCorrectedGyro(); //read gyro => outputs angularvelocity of each axis
+  readAccelerometer(); //read accelerometer => outputs the current acceleration as 3d vector
+  calculateGyroAxisAngles(); // has two purposes (sorry SOLID :( ) 1. Calculates angles directly based on the readings 2. turns the gyrovector based on the readings
+  calculateAngelsOfVector(accelVect, &accelAngl); //calculates the angles of the acceleretionvector X,Y
+  calculateAngelsOfVector(gyroVect, &gyroAngl); // calculates the angles of the gyrovector X,Y
+
+  Serial.println("GYRO VECT ANGLES: " +  vectorToString(gyroAngl) + " ACCEL VECT ANGLES: " +vectorToString(accelAngl)+ " GYRO ANGLES: " +vectorToString(gyroDirAngl));
  
 }
