@@ -20,7 +20,7 @@ float corrValX, corrValY, corrValZ; //correction values for correcting the readi
 
 float thresholdVect = 0.05;
 float thresholdGyro = 0.5;
-float irgendeVariable = 0.1;
+float smoothing = 10;
 
 float pi = 3.141592;
 
@@ -45,7 +45,7 @@ vec3_t isTurning()
   return isTurning;
 }
 
-void calculateCurrentVector() 
+void calculateCurrentAngles() 
 {
   if (accelVect.mag() <= startVect.mag() + thresholdVect && accelVect.mag() >= startVect.mag() - thresholdVect)
   {
@@ -53,15 +53,15 @@ void calculateCurrentVector()
 
     if (tempVect.x == true)
     {
-      currentAngles.x += round(accelAngl.x - currentAngles.x) * irgendeVariable;
+      currentAngles.x += round(accelAngl.x - currentAngles.x) * (1 / smoothing);
     }
     if (tempVect.y == true)
     {
-      currentAngles.y += round(accelAngl.y - currentAngles.y) * irgendeVariable;
+      currentAngles.y += round(accelAngl.y - currentAngles.y) * (1 / smoothing);
     }
     if (tempVect.z == true)
     {
-      currentAngles.z += round(accelAngl.z - currentAngles.z) * irgendeVariable;
+      currentAngles.z += round(accelAngl.z - currentAngles.z) * (1 / smoothing);
     }
   } 
 }
@@ -76,7 +76,8 @@ void inititalizeGyroscope(int _sampleSize)
 
   for (int i = 0; i < _sampleSize; i++)
   { 
-    delay(5);
+    Serial.println("Gyroscope calibrating.. step: " + String(i) + "/" + String(_sampleSize));
+    delay(2);
     float xRaw, yRaw, zRaw;
     IMU.readRawGyro(xRaw,yRaw, zRaw);
     corrValX += xRaw;
@@ -136,12 +137,17 @@ void rotateVector(vec3_t* _vect, vec3_t _ang)
   /*Z'*/ _vect->z =  _vect->y * sinX + _vect->z * cosX;
 }
 
+
+//Function to read thr accelerometer
 void readAccelerometer()
 {
- IMU.readAccel(accelVect.x,accelVect.y,accelVect.z);
+  if(IMU.accelAvailable())
+  {
+    IMU.readAccel(accelVect.x, accelVect.y, accelVect.z);
+  }
 }
 
-//Method to read the gyro and subtract the correction-values
+//Function to read the gyro and subtract the correction-values
 void readCorrectedGyro()
 {
   if (IMU.gyroscopeAvailable()) 
@@ -151,7 +157,6 @@ void readCorrectedGyro()
     anglespeedVect.y -= corrValY;
     anglespeedVect.z -= corrValZ;
   }
- 
 }
 
 //calculate X,Y eulerangles of a given vector (in reference of axis) => we will have to change this
@@ -163,7 +168,7 @@ void calculateAngelsOfVector(vec3_t _vectorIn, vec3_t* _anglesOut)
 
 }
 
-//Method to calculate the actual angles (time * speed) not accurate
+//Function to calculate the actual angles (time * speed) not accurate
 void calculateGyroAxisAngles()
 {
   long currenTime = millis();
@@ -186,7 +191,7 @@ String vectorToString(vec3_t _vector)
   return "| X:" + String(_vector.x) + "| Y:" + String(_vector.y) + "| Z:" + String(_vector.z);
 }
 
-// copies the accelerationvector on startup as startvector
+//copies the accelerationvector on startup as startvector
 void initializeStartVector()
 {
   IMU.readAccel(startVect.x, startVect.y, startVect.z);
@@ -228,10 +233,8 @@ void loop()
 { 
   readCorrectedGyro(); //read gyro => outputs angularvelocity of each axis
   readAccelerometer(); //read accelerometer => outputs the current acceleration as 3d vector
-  calculateGyroAxisAngles(); // has two purposes (sorry SOLID :( ) 1. Calculates angles directly based on the readings 2. turns the gyrovector based on the readings
   calculateAngelsOfVector(accelVect, &accelAngl); //calculates the angles of the acceleretionvector X,Y
-  calculateAngelsOfVector(gyroVect, &gyroAngl); // calculates the angles of the gyrovector X,Y
-  calculateCurrentVector(); //calculates the current vector based on the gyrovector and the accelerationvector)
+  calculateCurrentAngles(); //calculates the current angles based on som filtering of the accelerationvector)
 
   Serial.println("CURRENT VECT ANGLES: " + vectorToString(currentAngles) + " ANGLESPEED: " + vectorToString(anglespeedVect));
 }
