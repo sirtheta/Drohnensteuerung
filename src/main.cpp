@@ -23,14 +23,14 @@ float thresholdGyro = 0.5;
 float smoothing = 10;
 
 //PID-Loop variables {x,y,z} https://softwareengineering.stackexchange.com/questions/186124/programming-pid-loops-in-c
-vec3_t proportionals = {1,1,1};
-vec3_t integrals = {1,1,1};
-vec3_t derivatives = {1,1,1};
+vec3_t proportionals  = {0.1f,0.1f,0.1f};
+vec3_t integrals      = {0.1f,0.1f,0.1f};
+vec3_t derivatives    = {0.1f,0.1f,0.1f};
 
-vec3_t errors = {0,0,0};
-vec3_t integralErrors = {0,0,0};
+vec3_t errors         = {0.0f,0.0f,0.0f};
+vec3_t integralErrors = {0.0f,0.0f,0.0f};
 
-double timeStamp = 0;
+vec3_t timeStamp = {0.0f,0.0f,0.0f};
 //PID Ends
 
 float pi = 3.141592;
@@ -58,28 +58,29 @@ vec3_t isTurning()
 
 void calculateCurrentAnglesViaPIDLoop()
 {
-  double dT = 
-  //if current acceleration vector magnitude is within the threshold range of the start vector
-  //=> this means that the device is not beeing accelerated
-  if (accelVect.mag() < startVect.mag() + thresholdVect && accelVect.mag() > startVect.mag() - thresholdVect)
-  {
-    vec3_t tempVect = isTurning();
+  delay(10);
 
-    //if gyroscope is showing a rotation in x
-    if (tempVect.x == true)
-    {
-      currentAngles.x += round(accelAngl.x - currentAngles.x) * (1 / smoothing);
-    }
-    if (tempVect.y == true)
-    {
-      currentAngles.y += round(accelAngl.y - currentAngles.y) * (1 / smoothing);
-    }
-    if (tempVect.z == true)
-    {
-      currentAngles.z += round(accelAngl.z - currentAngles.z) * (1 / smoothing);
-    }
-  } 
+  float dTime = (millis() - timeStamp.x)/1000;
+  
+  float error =  accelAngl.x - currentAngles.x;
+  float dError = error - errors.x;
+  integralErrors.x += error;
+  currentAngles.x += proportionals.x * error + (integrals.x * integralErrors.x * dTime) + (derivatives.x * dError * dTime);
+  errors.x = error;
 
+  error =  accelAngl.y - currentAngles.y;
+  dError = error - errors.y;
+  integralErrors.y += error;
+  currentAngles.y += proportionals.y * error + (integrals.y * integralErrors.y * dTime) + (derivatives.y * dError * dTime);
+  errors.y = error;
+
+  error =  accelAngl.z - currentAngles.z;
+  dError = error - errors.z;
+  integralErrors.z += error;
+  currentAngles.z += proportionals.z * error + (integrals.z * integralErrors.z * dTime) + (derivatives.z * dError * dTime);
+  errors.z = error;
+
+  timeStamp.x = millis();
 }
 
 void calculateCurrentAngles() 
@@ -264,6 +265,7 @@ void setup()
   Serial.println("Gyroscope in degrees/second");
 
   lastTime = millis();
+  timeStamp = {lastTime, lastTime, lastTime};
 
   inititalizeGyroscope(1000);
   initializeStartVector(); 
@@ -274,7 +276,7 @@ void loop()
   readCorrectedGyro(); //read gyro => outputs angularvelocity of each axis
   readAccelerometer(); //read accelerometer => outputs the current acceleration as 3d vector
   calculateAngelsOfVector(accelVect, &accelAngl); //calculates the angles of the acceleretionvector X,Y
-  calculateCurrentAngles(); //calculates the current angles based on som filtering of the accelerationvector)
-
+  //calculateCurrentAngles(); //calculates the current angles based on som filtering of the accelerationvector)
+  calculateCurrentAnglesViaPIDLoop();
   Serial.println("CURRENT VECT ANGLES: " + vectorToString(currentAngles) + " ANGLESPEED: " + vectorToString(anglespeedVect));
 }
