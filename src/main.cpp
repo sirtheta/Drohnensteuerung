@@ -18,14 +18,14 @@ vec3_t gyroAngl = {0,0,0}; //gyro vector angles
 vec3_t gyroDirAngl = {90,90,0}; //gyro angles calculated directly by anglespeed
 float corrValX, corrValY, corrValZ; //correction values for correcting the readings
 
-float thresholdVect = 0.05;
+float thresholdVect = 0.03;
 float thresholdGyro = 0.5;
 float smoothing = 10;
 
 //PID-Loop variables {x,y,z} https://softwareengineering.stackexchange.com/questions/186124/programming-pid-loops-in-c
-vec3_t proportionals  = {0.1f,0.1f,0.1f};
-vec3_t integrals      = {0.1f,0.1f,0.1f};
-vec3_t derivatives    = {0.1f,0.1f,0.1f};
+vec3_t proportionals  = {0.3f,0.3f,0.3f};
+vec3_t integrals      = {0.03f,0.03f,0.03f};
+vec3_t derivatives    = {0.003f,0.003f,0.003f};
 
 vec3_t errors         = {0.0f,0.0f,0.0f};
 vec3_t integralErrors = {0.0f,0.0f,0.0f};
@@ -58,29 +58,31 @@ vec3_t isTurning()
 
 void calculateCurrentAnglesViaPIDLoop()
 {
-  delay(10);
+  delay(5);
 
+  bool accelerating = !(accelVect.mag() < startVect.mag() + thresholdVect && accelVect.mag() > startVect.mag() - thresholdVect);
   float dTime = (millis() - timeStamp.x)/1000;
   
-  float error =  accelAngl.x - currentAngles.x;
+  float error = accelerating? anglespeedVect.x * dTime : accelAngl.x - currentAngles.x; 
   float dError = error - errors.x;
   integralErrors.x += error;
-  currentAngles.x += proportionals.x * error + (integrals.x * integralErrors.x * dTime) + (derivatives.x * dError * dTime);
+  currentAngles.x += proportionals.x * error + (integrals.x * integralErrors.x * dTime) + (derivatives.x * dError / dTime);
   errors.x = error;
 
-  error =  accelAngl.y - currentAngles.y;
+  error =  accelerating? anglespeedVect.y * dTime : accelAngl.y - currentAngles.y; 
   dError = error - errors.y;
   integralErrors.y += error;
-  currentAngles.y += proportionals.y * error + (integrals.y * integralErrors.y * dTime) + (derivatives.y * dError * dTime);
+  currentAngles.y += proportionals.y * error + (integrals.y * integralErrors.y * dTime) + (derivatives.y * dError / dTime);
   errors.y = error;
 
-  error =  accelAngl.z - currentAngles.z;
+  error =  accelerating? anglespeedVect.z * dTime : accelAngl.z - currentAngles.z; 
   dError = error - errors.z;
   integralErrors.z += error;
-  currentAngles.z += proportionals.z * error + (integrals.z * integralErrors.z * dTime) + (derivatives.z * dError * dTime);
+  currentAngles.z += proportionals.z * error + (integrals.z * integralErrors.z * dTime) + (derivatives.z * dError / dTime);
   errors.z = error;
 
   timeStamp.x = millis();
+
 }
 
 void calculateCurrentAngles() 
@@ -194,7 +196,7 @@ void readCorrectedGyro()
   if (IMU.gyroscopeAvailable()) 
   {
     IMU.readGyro(anglespeedVect.x,anglespeedVect.y,anglespeedVect.z);
-    anglespeedVect.x -= corrValX;
+    anglespeedVect.x = (anglespeedVect.x - corrValX);
     anglespeedVect.y -= corrValY;
     anglespeedVect.z -= corrValZ;
   }
