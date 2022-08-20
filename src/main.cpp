@@ -143,6 +143,18 @@ void setup()
   initializeStartVector();
 }
 
+void SendPackage()
+{
+  float x     = currentAngles.x;
+  float y     = currentAngles.y;
+  float z     = currentAngles.z;
+  float moveX = accelVect.x;
+  float moveY = accelVect.y;
+
+  Serial.println(String(x) + ":" + String(y) + ":" + String(z) +":" + String(moveX) + ":" + String(moveY));
+
+}
+
 void loop() 
 { 
   readCorrectedGyro(); //read gyro => outputs angularvelocity of each axis
@@ -151,5 +163,6 @@ void loop()
 
   calculateCurrentAngles();
 
-  Serial.println("CURRENT VECT ANGLES: " + vectorToString(currentAngles) + " ANGLESPEED: " + vectorToString(anglespeedVect));
+  //Serial.println("CURRENT VECT ANGLES: " + vectorToString(currentAngles) + " ANGLESPEED: " + vectorToString(anglespeedVect));
+  SendPackage();
 }
