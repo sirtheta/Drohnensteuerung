@@ -1,21 +1,25 @@
 //https://softwareengineering.stackexchange.com/questions/186124/programming-pid-loops-in-c
 
+
 #include "arduino.h"
 
 #ifndef pid_controller_h
 #define pid_controller_h
 
-
-
 class PIDcontroller
 {
 private:
-    float p;
-    float i;
-    float d;
+    //proportional factor
+    float p; 
+    //integral factor
+    float i; 
+    //derivative factor
+    float d; 
 
+    //last error
     float error;
-    float integralError;
+    //integral error
+    float integralError; 
 
     float* pOutput;
 public:
@@ -25,11 +29,10 @@ public:
 
 PIDcontroller::PIDcontroller(float _p, float _i, float _d, float* _pOutput)
 {
-    p       = _p;
-    i       = _i;
-    d       = _d;
-    pOutput = _pOutput;
-
+    p               = _p;
+    i               = _i;
+    d               = _d;
+    pOutput         = _pOutput;
     error           = 0;
     integralError   = 0;
 }

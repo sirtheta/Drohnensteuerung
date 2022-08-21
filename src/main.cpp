@@ -6,13 +6,14 @@
 #include <vector_type.h>
 #include <PID_controller.h>
 
+bool DEBUG = false;
 
 vec3_t anglespeedVect = {0,0,0}; //anglespeed readings of the gyro
 vec3_t accelVect = {0,0,0}; //acceleration readings
-vec3_t accelAngl = {0,0,0}; //calculated acceleration angles
+vec3_t accelEulerAnglesVect = {0,0,0}; //calculated acceleration angles
 
 vec3_t startVect = {0,0,0}; //acceleration vector at start
-vec3_t currentAngles = {0,0,0}; // current orientation vector
+vec3_t currentEulerAnglesVect = {0,0,0}; // current orientation vector
 
 
 float thresholdVect = 0.03;
@@ -35,22 +36,23 @@ void calculateCurrentAngles()
 
   //flag if sensor is beeing accelerated
   bool accelerating = !(accelVect.mag() < startVect.mag() + thresholdVect && accelVect.mag() > startVect.mag() - thresholdVect);
+  //calculate time delta
   float dTime = (millis() - timeStamp)/1000;
-  float error =0;
+
+  //calculate errors
+  float xError = accelerating ? anglespeedVect.x * dTime : accelEulerAnglesVect.x - currentEulerAnglesVect.x;
+  float yError = accelerating ? anglespeedVect.y * dTime : accelEulerAnglesVect.y - currentEulerAnglesVect.y;
+  float zError = anglespeedVect.y * dTime;
 
   //running PID loops for correcting the current angles
-  error = accelerating ? anglespeedVect.x * dTime : accelAngl.x - currentAngles.x;
-  xController.processError(error, dTime);
-  error = accelerating ? anglespeedVect.y * dTime : accelAngl.y - currentAngles.y;
-  yController.processError(error, dTime);
-  error =  anglespeedVect.y * dTime;
-  zController.processError(anglespeedVect.z * dTime,dTime);
-
+  xController.processError(xError, dTime);
+  yController.processError(yError, dTime);
+  zController.processError(zError, dTime);
 
   //applying corrections to current angles
-  currentAngles.x += xCorrection;
-  currentAngles.y += yCorrection;
-  currentAngles.z += zCorrection;
+  currentEulerAnglesVect.x += xCorrection;
+  currentEulerAnglesVect.y += yCorrection;
+  currentEulerAnglesVect.z += zCorrection;
 
   timeStamp = millis();
 }
@@ -84,7 +86,7 @@ void inititalizeGyroscope(int _sampleSize)
 //Function to read the gyro and subtract the correction-values
 void readCorrectedGyro()
 {
-  if (IMU.gyroscopeAvailable()) 
+  if (IMU.gyroAvailable()) 
   {
     IMU.readGyro(anglespeedVect.x,anglespeedVect.y,anglespeedVect.z);
   }
@@ -118,7 +120,7 @@ String vectorToString(vec3_t _vector)
 void initializeStartVector()
 {
   IMU.readAccel(startVect.x, startVect.y, startVect.z);
-  calculateAngelsOfVector(startVect, &currentAngles);
+  calculateAngelsOfVector(startVect, &currentEulerAnglesVect);
 }
 
 void setup() 
@@ -143,26 +145,31 @@ void setup()
   initializeStartVector();
 }
 
-void SendPackage()
+void sendFrame()
 {
-  float x     = currentAngles.x;
-  float y     = currentAngles.y;
-  float z     = currentAngles.z;
+  float x     = currentEulerAnglesVect.x;
+  float y     = currentEulerAnglesVect.y;
+  float z     = currentEulerAnglesVect.z;
   float moveX = accelVect.x;
   float moveY = accelVect.y;
 
   Serial.println(String(x) + ":" + String(y) + ":" + String(z) +":" + String(moveX) + ":" + String(moveY));
-
 }
 
 void loop() 
 { 
   readCorrectedGyro(); //read gyro => outputs angularvelocity of each axis
   readAccelerometer(); //read accelerometer => outputs the current acceleration as 3d vector
-  calculateAngelsOfVector(accelVect, &accelAngl); //calculates the angles of the acceleretionvector X,Y
+  calculateAngelsOfVector(accelVect, &accelEulerAnglesVect); //calculates the angles of the acceleretionvector X,Y
 
   calculateCurrentAngles();
 
-  //Serial.println("CURRENT VECT ANGLES: " + vectorToString(currentAngles) + " ANGLESPEED: " + vectorToString(anglespeedVect));
-  SendPackage();
+  if(DEBUG)
+  {
+    Serial.println("CURRENT VECT ANGLES: " + vectorToString(currentEulerAnglesVect) + " ANGLESPEED: " + vectorToString(anglespeedVect));
+  }
+  else
+  {
+    sendFrame();
+  }  
 }
