@@ -55,6 +55,7 @@ char paramSeparator = '|';
 
 char chrSetPid[5] = "PIDS";
 char chrReadPid[5] = "PIDR";
+char chrTransferPid[5] = "PIDT";
 
 enum Param 
 {
@@ -250,6 +251,62 @@ void setPidValue()
   }
 }
 
+// Send the requested PID Value via Serial
+void sendPIDToSerial(float _fVal)
+{
+  int iVal = _fVal * 10000; // transfer float to int because serial will only print two digits after comma
+  Serial.println(String(chrTransferPid) + String(paramSeparator) + strAxis + String(paramSeparator) + strPidParam + String(paramSeparator) + iVal + String(cmdTerminator));
+}
+
+void getPidValue()
+{
+  if (strAxis == "X")
+  {
+    if (strPidParam == "P")
+    {
+      sendPIDToSerial(xController.getPID_P());
+    }
+    else if (strPidParam == "I")
+    {
+      sendPIDToSerial(xController.getPID_I());
+    }
+    else if (strPidParam == "D")
+    {
+      sendPIDToSerial(xController.getPID_D());
+    }
+  }
+  else if (strAxis == "Y")
+  {
+    if (strPidParam == "P")
+    {
+      sendPIDToSerial(yController.getPID_P());
+    }
+    else if (strPidParam == "I")
+    {
+      sendPIDToSerial(yController.getPID_I());
+    }
+    else if (strPidParam == "D")
+    {
+      sendPIDToSerial(yController.getPID_D());
+    }
+  }
+  else if (strAxis == "Z")
+  {
+    if (strPidParam == "P")
+    {
+      sendPIDToSerial(zController.getPID_P());
+    }
+    else if (strPidParam == "I")
+    {
+      sendPIDToSerial(zController.getPID_I());
+    }
+    else if (strPidParam == "D")
+    {
+      sendPIDToSerial(zController.getPID_D());
+    }
+  }
+}
+
 void executeIncomingCommand()
 {
   if (strCommand == chrSetPid) 
@@ -258,7 +315,7 @@ void executeIncomingCommand()
   }
   else if (strCommand == chrReadPid)
   {
-
+    getPidValue();
   }  
 }
 
