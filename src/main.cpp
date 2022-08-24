@@ -207,7 +207,7 @@ void setPidValue()
   {
     if (strPidParam == "P")
     {
-      xController.setPID_D(fValue);
+      xController.setPID_P(fValue);
     }
     else if (strPidParam == "I")
     {
@@ -222,7 +222,7 @@ void setPidValue()
   {
     if (strPidParam == "P")
     {
-      yController.setPID_D(fValue);
+      yController.setPID_P(fValue);
     }
     else if (strPidParam == "I")
     {
@@ -237,7 +237,7 @@ void setPidValue()
   {
     if (strPidParam == "P")
     {
-      zController.setPID_D(fValue);
+      zController.setPID_P(fValue);
     }
     else if (strPidParam == "I")
     {
