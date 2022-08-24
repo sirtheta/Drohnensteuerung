@@ -25,7 +25,14 @@ private:
 public:
     PIDController(float _p, float _i, float _d, float* _pOutput);
     void processError(float _error, float _dTime);
-    void setPIDS(float _p, float _i, float _d);
+    /*set Pid functions*/
+    void setPID_P(float _p);
+    void setPID_I(float _i);
+    void setPID_D(float _d);
+    /*get Pid functions*/
+    float getPID_P();
+    float getPID_I();
+    float getPID_D();
 };
 
 #endif
