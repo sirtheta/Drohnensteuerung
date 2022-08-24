@@ -6,6 +6,8 @@
 #include <vector_type.h>
 #include <PID_controller.h>
 
+#define MAX_MESSAGE_LENGTH 20
+
 bool DEBUG = false;
 
 vec3_t anglespeedVect = {0,0,0}; //anglespeed readings of the gyro
@@ -15,20 +17,50 @@ vec3_t accelEulerAnglesVect = {0,0,0}; //calculated acceleration angles
 vec3_t startVect = {0,0,0}; //acceleration vector at start
 vec3_t currentEulerAnglesVect = {0,0,0}; // current orientation vector
 
-
 float thresholdVect = 0.03;
 float thresholdGyro = 0.5;
 
 float timeStamp = 0;
 
+short paramPosition = 0;
+
+//PID Values
+float pidPX = 0.3;
+float pidIX = 0.03;
+float pidDX = 0.003;
+
+float pidPY = 0.3;
+float pidIY = 0.03;
+float pidDY = 0.003;
+
+float pidPZ = 0.3;
+float pidIZ = 0.03;
+float pidDZ = 0.003;
+
 //PID CONTROLLERS
 float xCorrection;
-PIDcontroller xController(0.3, 0.03, 0.003, &xCorrection);
+PIDController xController(pidPX, pidIX, pidDX, &xCorrection);
 float yCorrection;
-PIDcontroller yController(0.3, 0.03, 0.003, &yCorrection);
+PIDController yController(pidPY, pidIY, pidDY, &yCorrection);
 float zCorrection;
-PIDcontroller zController(0.3, 0.03, 0.003, &zCorrection);
+PIDController zController(pidPZ, pidIY, pidDY, &zCorrection);
 
+String strCommand;
+String strAxis;
+String strPidParam;
+String strValue;
+
+char cmdTerminator = ';';
+char paramSeparator = '|';
+
+
+enum  Param 
+{
+  command = 1,
+  axis = 2,
+  pidParam = 3,
+  value = 4
+};
 
 void calculateCurrentAngles()
 {
@@ -106,7 +138,6 @@ void calculateAngelsOfVector(vec3_t _vectorIn, vec3_t* _anglesOut)
  _anglesOut->x = (acosf(_vectorIn.x / _vectorIn.mag())) * 180 / PI; //(*180/pi) => convert rad in degrees
  _anglesOut->y = (acosf(_vectorIn.y / _vectorIn.mag())) * 180 / PI; //(*180/pi) => convert rad in degrees
  _anglesOut->z = 0; //Calculation of Z rotation is not possible 
-
 }
 
 
@@ -156,6 +187,22 @@ void sendFrame()
   Serial.println(String(x) + ":" + String(y) + ":" + String(z) +":" + String(moveX) + ":" + String(moveY));
 }
 
+/***********************************************
+ Protocol Definiton to send and receive PID Values
+***********************************************
+ setPidValues:
+ string must start with: "PIDS"
+ folowing by the axis Parameter X,Y or Z
+ folowing with the value to set
+ example:
+ PIDS|P|X|0.3;
+***********************************************/
+
+void executeIncomingCommand()
+{
+  
+}
+
 void loop() 
 { 
   readCorrectedGyro(); //read gyro => outputs angularvelocity of each axis
@@ -164,12 +211,64 @@ void loop()
 
   calculateCurrentAngles();
 
-  if(DEBUG)
+  // Check to see if anything is available in the serial receive buffer
+  while (Serial.available() > 0)
+  {
+    // Create a place to hold the incoming message
+    static char message[MAX_MESSAGE_LENGTH];
+    static unsigned int message_pos = 0;
+
+    // Read the next available byte in the serial receive buffer
+    char inByte = Serial.read();
+
+    // Message coming check for pipe
+    if (inByte != paramSeparator && inByte != cmdTerminator && message_pos < MAX_MESSAGE_LENGTH - 1)
+    {
+      // Add the incoming byte to message
+      message[message_pos] = inByte;
+      message_pos++;
+    }
+    else
+    {
+      message[message_pos] = '\0';
+      paramPosition++;
+      //delay(500);
+      // Reset for the next message
+      message_pos = 0;
+
+      switch (paramPosition)
+      {
+      case command:
+        strCommand = String(message);
+        break;
+      case axis:
+        strAxis = String(message);
+        break;
+      case pidParam:
+        strPidParam = String(message);
+        break;
+      case value:
+        strValue = String(message);
+        break;
+      default:
+        break;
+      }
+
+      if (inByte == cmdTerminator)
+      {
+        paramPosition = 0;
+        message_pos = 0;
+        executeIncomingCommand();
+      }
+    }
+  }
+
+  if (DEBUG)
   {
     Serial.println("CURRENT VECT ANGLES: " + vectorToString(currentEulerAnglesVect) + " ANGLESPEED: " + vectorToString(anglespeedVect));
   }
   else
   {
-    sendFrame();
+    //sendFrame();
   }  
 }
