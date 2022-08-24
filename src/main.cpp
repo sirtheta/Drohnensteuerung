@@ -48,13 +48,15 @@ PIDController zController(pidPZ, pidIY, pidDY, &zCorrection);
 String strCommand;
 String strAxis;
 String strPidParam;
-String strValue;
+float fValue;
 
 char cmdTerminator = ';';
 char paramSeparator = '|';
 
+char chrSetPid[5] = "PIDS";
+char chrReadPid[5] = "PIDR";
 
-enum  Param 
+enum Param 
 {
   command = 1,
   axis = 2,
@@ -193,14 +195,71 @@ void sendFrame()
  setPidValues:
  string must start with: "PIDS"
  folowing by the axis Parameter X,Y or Z
- folowing with the value to set
+ folowing with the P, I or D and the value to set
  example:
- PIDS|P|X|0.3;
+ PIDS|X|P|0.3;
 ***********************************************/
+
+// this is a shit... :(
+void setPidValue()
+{
+  if (strAxis == "X")
+  {
+    if (strPidParam == "P")
+    {
+      xController.setPID_D(fValue);
+    }
+    else if (strPidParam == "I")
+    {
+      xController.setPID_I(fValue);
+    }
+    else if (strPidParam == "D")
+    {
+      xController.setPID_D(fValue);
+    }
+  }
+  else if (strAxis == "Y")
+  {
+    if (strPidParam == "P")
+    {
+      yController.setPID_D(fValue);
+    }
+    else if (strPidParam == "I")
+    {
+      yController.setPID_I(fValue);
+    }
+    else if (strPidParam == "D")
+    {
+      yController.setPID_D(fValue);
+    }
+  }
+  else if (strAxis == "Z")
+  {
+    if (strPidParam == "P")
+    {
+      zController.setPID_D(fValue);
+    }
+    else if (strPidParam == "I")
+    {
+      zController.setPID_I(fValue);
+    }
+    else if (strPidParam == "D")
+    {
+      zController.setPID_D(fValue);
+    }
+  }
+}
 
 void executeIncomingCommand()
 {
-  
+  if (strCommand == chrSetPid) 
+  {
+    setPidValue();
+  }
+  else if (strCommand == chrReadPid)
+  {
+
+  }  
 }
 
 void loop() 
@@ -248,7 +307,7 @@ void loop()
         strPidParam = String(message);
         break;
       case value:
-        strValue = String(message);
+        fValue = String(message).toFloat();
         break;
       default:
         break;
