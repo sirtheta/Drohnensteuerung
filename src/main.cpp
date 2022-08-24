@@ -5,6 +5,7 @@
 #include <Arduino_LSM9DS1.h>
 #include <vector_type.h>
 #include <PID_controller.h>
+#include <ProtocolHandler.h>
 
 #define MAX_MESSAGE_LENGTH 20
 
@@ -45,17 +46,13 @@ PIDController yController(pidPY, pidIY, pidDY, &yCorrection);
 float zCorrection;
 PIDController zController(pidPZ, pidIY, pidDY, &zCorrection);
 
+//Protocol Handler
+ProtocolHandler protocolHandler;
+
 String strCommand;
 String strAxis;
 String strPidParam;
 float fValue;
-
-char cmdTerminator = ';';
-char paramSeparator = '|';
-
-char chrSetPid[5] = "PIDS";
-char chrReadPid[5] = "PIDR";
-char chrTransferPid[5] = "PIDT";
 
 enum Param 
 {
@@ -201,119 +198,47 @@ void sendFrame()
  PIDS|X|P|0.3;
 ***********************************************/
 
-// this is a shit... :(
+
 void setPidValue()
 {
   if (strAxis == "X")
   {
-    if (strPidParam == "P")
-    {
-      xController.setPID_P(fValue);
-    }
-    else if (strPidParam == "I")
-    {
-      xController.setPID_I(fValue);
-    }
-    else if (strPidParam == "D")
-    {
-      xController.setPID_D(fValue);
-    }
+    //ProtocolHandler::setterPidValues(strPidParam, fValue, xController);
   }
   else if (strAxis == "Y")
   {
-    if (strPidParam == "P")
-    {
-      yController.setPID_P(fValue);
-    }
-    else if (strPidParam == "I")
-    {
-      yController.setPID_I(fValue);
-    }
-    else if (strPidParam == "D")
-    {
-      yController.setPID_D(fValue);
-    }
+    //protocolHandler.setterPidValues(strPidParam, fValue, yController);
   }
   else if (strAxis == "Z")
   {
-    if (strPidParam == "P")
-    {
-      zController.setPID_P(fValue);
-    }
-    else if (strPidParam == "I")
-    {
-      zController.setPID_I(fValue);
-    }
-    else if (strPidParam == "D")
-    {
-      zController.setPID_D(fValue);
-    }
+    //protocolHandler.setterPidValues(strPidParam, fValue, zController);
   }
 }
 
-// Send the requested PID Value via Serial
-void sendPIDToSerial(float _fVal)
-{
-  int iVal = _fVal * 10000; // transfer float to int because serial will only print two digits after comma
-  Serial.println(String(chrTransferPid) + String(paramSeparator) + strAxis + String(paramSeparator) + strPidParam + String(paramSeparator) + iVal + String(cmdTerminator));
-}
 
 void getPidValue()
 {
   if (strAxis == "X")
   {
-    if (strPidParam == "P")
-    {
-      sendPIDToSerial(xController.getPID_P());
-    }
-    else if (strPidParam == "I")
-    {
-      sendPIDToSerial(xController.getPID_I());
-    }
-    else if (strPidParam == "D")
-    {
-      sendPIDToSerial(xController.getPID_D());
-    }
+    //protocolHandler.getterPidValues(strAxis, strPidParam, xController);
   }
   else if (strAxis == "Y")
   {
-    if (strPidParam == "P")
-    {
-      sendPIDToSerial(yController.getPID_P());
-    }
-    else if (strPidParam == "I")
-    {
-      sendPIDToSerial(yController.getPID_I());
-    }
-    else if (strPidParam == "D")
-    {
-      sendPIDToSerial(yController.getPID_D());
-    }
+    //protocolHandler.getterPidValues(strAxis, strPidParam, yController);
   }
   else if (strAxis == "Z")
   {
-    if (strPidParam == "P")
-    {
-      sendPIDToSerial(zController.getPID_P());
-    }
-    else if (strPidParam == "I")
-    {
-      sendPIDToSerial(zController.getPID_I());
-    }
-    else if (strPidParam == "D")
-    {
-      sendPIDToSerial(zController.getPID_D());
-    }
+    //protocolHandler.getterPidValues(strAxis, strPidParam, zController);
   }
 }
 
 void executeIncomingCommand()
 {
-  if (strCommand == chrSetPid) 
+  if (strCommand == protocolHandler.chrSetPid)
   {
     setPidValue();
   }
-  else if (strCommand == chrReadPid)
+  else if (strCommand == protocolHandler.chrReadPid)
   {
     getPidValue();
   }  
@@ -338,7 +263,7 @@ void loop()
     char inByte = Serial.read();
 
     // Message coming check for pipe
-    if (inByte != paramSeparator && inByte != cmdTerminator && message_pos < MAX_MESSAGE_LENGTH - 1)
+    if (inByte != protocolHandler.paramSeparator && inByte != protocolHandler.cmdTerminator && message_pos < MAX_MESSAGE_LENGTH - 1)
     {
       // Add the incoming byte to message
       message[message_pos] = inByte;
@@ -370,7 +295,7 @@ void loop()
         break;
       }
 
-      if (inByte == cmdTerminator)
+      if (inByte == protocolHandler.cmdTerminator)
       {
         paramPosition = 0;
         message_pos = 0;
