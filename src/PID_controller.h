@@ -6,7 +6,7 @@
 #ifndef pid_controller_h
 #define pid_controller_h
 
-class PIDcontroller
+class PIDController
 {
 private:
     //proportional factor
@@ -23,27 +23,16 @@ private:
 
     float* pOutput;
 public:
-    PIDcontroller(float _p, float _i, float _d, float* _pOutput);
+    PIDController(float _p, float _i, float _d, float* _pOutput);
     void processError(float _error, float _dTime);
+    /*set Pid functions*/
+    void setPID_P(float _p);
+    void setPID_I(float _i);
+    void setPID_D(float _d);
+    /*get Pid functions*/
+    float getPID_P();
+    float getPID_I();
+    float getPID_D();
 };
-
-PIDcontroller::PIDcontroller(float _p, float _i, float _d, float* _pOutput)
-{
-    p               = _p;
-    i               = _i;
-    d               = _d;
-    pOutput         = _pOutput;
-    error           = 0;
-    integralError   = 0;
-}
-
-void PIDcontroller::processError(float _error, float _dTime)
-{
-    integralError += _error;
-
-    *pOutput = p * _error + (i * integralError * _dTime) + (d * (_error - error) / _dTime);
-    
-    error = _error;
-}
 
 #endif
