@@ -2,46 +2,42 @@
 #include <vector_type.h>
 #include <PID_controller.h>
 #include <ProtocolHandler.h>
-#include "GlobalDefines.h"
+#include <GlobalDefines.h>
 
+// max length of incoming message
 #define MAX_MESSAGE_LENGTH 20
 
 bool DEBUG = false;
 
-vec3_t anglespeedVect = {0,0,0}; //anglespeed readings of the gyro
-vec3_t accelVect = {0,0,0}; //acceleration readings
-vec3_t accelEulerAnglesVect = {0,0,0}; //calculated acceleration angles
+vec3_t anglespeedVect         = {0,0,0}; //anglespeed readings of the gyro
+vec3_t accelVect              = {0,0,0}; //acceleration readings
+vec3_t accelEulerAnglesVect   = {0,0,0}; //calculated acceleration angles
 
-vec3_t startVect = {0,0,0}; //acceleration vector at start
+vec3_t startVect              = {0,0,0}; //acceleration vector at start
 vec3_t currentEulerAnglesVect = {0,0,0}; // current orientation vector
 
 float thresholdVect = 0.03;
 float thresholdGyro = 0.5;
 
-float timeStamp = 0;
-
+float timeStamp     = 0;
+// initalise parameter position, used for incoming messages
 short paramPosition = 0;
 
-//PID Values
-float pidPX = 0.3;
-float pidIX = 0.03;
-float pidDX = 0.003;
+//initial PID Values
+// can be overwritten via protocol
+float fPidP = 0.3;
+float fPidI = 0.03;
+float fPidD = 0.003;
 
-float pidPY = 0.3;
-float pidIY = 0.03;
-float pidDY = 0.003;
-
-float pidPZ = 0.3;
-float pidIZ = 0.03;
-float pidDZ = 0.003;
+// values for PID controllers
+float xCorrection;
+float yCorrection;
+float zCorrection;
 
 //PID CONTROLLERS
-float xCorrection;
-PIDController xController(pidPX, pidIX, pidDX, &xCorrection);
-float yCorrection;
-PIDController yController(pidPY, pidIY, pidDY, &yCorrection);
-float zCorrection;
-PIDController zController(pidPZ, pidIY, pidDY, &zCorrection);
+PIDController xController(fPidP, fPidI, fPidD, &xCorrection);
+PIDController yController(fPidP, fPidI, fPidD, &yCorrection);
+PIDController zController(fPidP, fPidI, fPidD, &zCorrection);
 
 //Protocol Handler
 ProtocolHandler protocolHandler;
@@ -139,13 +135,6 @@ void calculateAngelsOfVector(vec3_t _vectorIn, vec3_t* _anglesOut)
  _anglesOut->x = (acosf(_vectorIn.x / _vectorIn.mag())) * 180 / PI; //(*180/pi) => convert rad in degrees
  _anglesOut->y = (acosf(_vectorIn.y / _vectorIn.mag())) * 180 / PI; //(*180/pi) => convert rad in degrees
  _anglesOut->z = 0; //Calculation of Z rotation is not possible 
-}
-
-
-//used to desplay a vector as readable string
-String vectorToString(vec3_t _vector)
-{
-  return "| X:" + String(_vector.x) + "| Y:" + String(_vector.y) + "| Z:" + String(_vector.z);
 }
 
 //copies the accelerationvector on startup as startvector
@@ -270,6 +259,7 @@ void loop()
     }
     else
     {
+      // adds terminator to message 
       message[message_pos] = '\0';
       paramPosition++;
       //delay(500);
@@ -305,16 +295,9 @@ void loop()
     }
   }
 
-  if (DEBUG)
-  {
-    Serial.println("CURRENT VECT ANGLES: " + vectorToString(currentEulerAnglesVect) + " ANGLESPEED: " + vectorToString(anglespeedVect));
-  }
-  else
-  {
-    protocolHandler.sendFrame(currentEulerAnglesVect.x, "X", chrAngleTransfer);
-    protocolHandler.sendFrame(currentEulerAnglesVect.y, "Y", chrAngleTransfer);
-    //protocolHandler.sendFrame(currentEulerAnglesVect.z, "Z", chrAngleTransfer); // not used yet
-    protocolHandler.sendFrame(accelVect.x, "X", chrMoveTransfer);
-    protocolHandler.sendFrame(accelVect.y, "Y", chrMoveTransfer);
-  }  
+  protocolHandler.sendFrame(currentEulerAnglesVect.x, "X", chrAngleTransfer);
+  protocolHandler.sendFrame(currentEulerAnglesVect.y, "Y", chrAngleTransfer);
+  //protocolHandler.sendFrame(currentEulerAnglesVect.z, "Z", chrAngleTransfer); // not used yet
+  protocolHandler.sendFrame(accelVect.x, "X", chrMoveTransfer);
+  protocolHandler.sendFrame(accelVect.y, "Y", chrMoveTransfer);
 }
