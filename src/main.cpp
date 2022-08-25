@@ -1,60 +1,55 @@
-/*
-  INSERT MEANINGFULL COMMENT HERE :)
-*/
-
 #include <Arduino_LSM9DS1.h>
 #include <vector_type.h>
 #include <PID_controller.h>
-//#include <ProtocolHandler.h>
-#include "GlobalDefines.h"
+#include <ProtocolHandler.h>
+#include <GlobalDefines.h>
 
+// max length of incoming message
 #define MAX_MESSAGE_LENGTH 20
 
 bool DEBUG = false;
 
-vec3_t anglespeedVect = {0,0,0}; //anglespeed readings of the gyro
-vec3_t accelVect = {0,0,0}; //acceleration readings
-vec3_t accelEulerAnglesVect = {0,0,0}; //calculated acceleration angles
+vec3_t anglespeedVect         = {0,0,0}; //anglespeed readings of the gyro
+vec3_t accelVect              = {0,0,0}; //acceleration readings
+vec3_t accelEulerAnglesVect   = {0,0,0}; //calculated acceleration angles
 
-vec3_t startVect = {0,0,0}; //acceleration vector at start
+vec3_t startVect              = {0,0,0}; //acceleration vector at start
 vec3_t currentEulerAnglesVect = {0,0,0}; // current orientation vector
 
+// threshold values for acceleration and gyro values
 float thresholdVect = 0.03;
 float thresholdGyro = 0.5;
 
-float timeStamp = 0;
-
+float timeStamp     = 0;
+// initalise parameter position, used for incoming messages
 short paramPosition = 0;
 
-//PID Values
-float pidPX = 0.3;
-float pidIX = 0.03;
-float pidDX = 0.003;
+//initial PID Values
+// can be overwritten via protocol
+float fPidP = 0.3;
+float fPidI = 0.03;
+float fPidD = 0.003;
 
-float pidPY = 0.3;
-float pidIY = 0.03;
-float pidDY = 0.003;
-
-float pidPZ = 0.3;
-float pidIZ = 0.03;
-float pidDZ = 0.003;
+// values for PID controllers
+float xCorrection;
+float yCorrection;
+float zCorrection;
 
 //PID CONTROLLERS
-float xCorrection;
-PIDController xController(pidPX, pidIX, pidDX, &xCorrection);
-float yCorrection;
-PIDController yController(pidPY, pidIY, pidDY, &yCorrection);
-float zCorrection;
-PIDController zController(pidPZ, pidIY, pidDY, &zCorrection);
+PIDController xController(fPidP, fPidI, fPidD, &xCorrection);
+PIDController yController(fPidP, fPidI, fPidD, &yCorrection);
+PIDController zController(fPidP, fPidI, fPidD, &zCorrection);
 
 //Protocol Handler
-//ProtocolHandler protocolHandler;
+ProtocolHandler protocolHandler;
 
+// Protocol data
 String strCommand;
 String strAxis;
 String strPidParam;
 float fValue;
 
+// param enum for protocol switchcase
 enum Param 
 {
   command = 1,
@@ -63,6 +58,7 @@ enum Param
   value = 4
 };
 
+// function to calculate the current angles
 void calculateCurrentAngles()
 {
   delay(5);
@@ -125,6 +121,7 @@ void readCorrectedGyro()
   }
 }
 
+// read current acceleration
 void readAccelerometer()
 {
   if (IMU.accelAvailable())
@@ -139,13 +136,6 @@ void calculateAngelsOfVector(vec3_t _vectorIn, vec3_t* _anglesOut)
  _anglesOut->x = (acosf(_vectorIn.x / _vectorIn.mag())) * 180 / PI; //(*180/pi) => convert rad in degrees
  _anglesOut->y = (acosf(_vectorIn.y / _vectorIn.mag())) * 180 / PI; //(*180/pi) => convert rad in degrees
  _anglesOut->z = 0; //Calculation of Z rotation is not possible 
-}
-
-
-//used to desplay a vector as readable string
-String vectorToString(vec3_t _vector)
-{
-  return "| X:" + String(_vector.x) + "| Y:" + String(_vector.y) + "| Z:" + String(_vector.z);
 }
 
 //copies the accelerationvector on startup as startvector
@@ -177,17 +167,6 @@ void setup()
   initializeStartVector();
 }
 
-void sendFrame()
-{
-  float x     = currentEulerAnglesVect.x;
-  float y     = currentEulerAnglesVect.y;
-  float z     = currentEulerAnglesVect.z;
-  float moveX = accelVect.x;
-  float moveY = accelVect.y;
-
-  Serial.println(String(x) + ":" + String(y) + ":" + String(z) +":" + String(moveX) + ":" + String(moveY));
-}
-
 /***********************************************
  Protocol Definiton to send and receive PID Values
 ***********************************************
@@ -196,79 +175,52 @@ void sendFrame()
  folowing by the axis Parameter X,Y or Z
  folowing with the P, I or D and the value to set
  example:
- PIDS|X|P|0.3;
+  PIDS|X|P|0.3;
+ example to get PID:
+  PIDR|X|P;
+example of requested transfered data:
+  PIDT|X|P|0.3;
+example for angle Frame:
+  ANGT|X|90.00;
+example for angle Frame:
+  MOVT|X|0.5;
 ***********************************************/
-void setterPidValue(String _strPidParam, float _fValue, PIDController _pidCtrl)
-{
-  if (_strPidParam == "P")
-  {
-    _pidCtrl.setPID_P(_fValue);
-  }
-  else if (_strPidParam == "I")
-  {
-    _pidCtrl.setPID_I(_fValue);
-  }
-  else if (_strPidParam == "D")
-  {
-    _pidCtrl.setPID_D(_fValue);
-  }
-}
-
-void sendPIDToSerial(float _fVal, String _strAxis, String _strPidParam)
-{
-  int iVal = _fVal * 10000; // transfer float to int because serial will only print two digits after comma
-  Serial.println(String(chrTransferPid) + String(paramSeparator) + _strAxis + String(paramSeparator) + _strPidParam + String(paramSeparator) + iVal + String(cmdTerminator));
-}
-
-void getterPidValue(String _strAxis, String _strPidParam, PIDController _pidCtrl)
-{
-  if (_strPidParam == "P")
-  {
-    sendPIDToSerial(_pidCtrl.getPID_P(), _strAxis, _strPidParam);
-  }
-  else if (_strPidParam == "I")
-  {
-    sendPIDToSerial(_pidCtrl.getPID_I(), _strAxis, _strPidParam);
-  }
-  else if (_strPidParam == "D")
-  {
-    sendPIDToSerial(_pidCtrl.getPID_D(), _strAxis, _strPidParam);
-  }
-}
-
+// sets the received PID value via the setter method of the protocol handler
 void setPidValue()
 {
   if (strAxis == "X")
   {
-    setterPidValue(strPidParam, fValue, xController);
+    protocolHandler.setterPidValue(strPidParam, fValue, &xController);
   }
   else if (strAxis == "Y")
   {
-    setterPidValue(strPidParam, fValue, yController);
+    protocolHandler.setterPidValue(strPidParam, fValue, &yController);
   }
   else if (strAxis == "Z")
   {
-    setterPidValue(strPidParam, fValue, zController);
+    protocolHandler.setterPidValue(strPidParam, fValue, &zController);
   }
 }
 
-
+// gets the current PID value from received command and sends it 
+// via the getter method of protocol handler
 void getPidValue()
 {
   if (strAxis == "X")
   {
-   getterPidValue(strAxis, strPidParam, xController);
+    protocolHandler.getterPidValue(strAxis, strPidParam, &xController);
   }
   else if (strAxis == "Y")
   {
-    getterPidValue(strAxis, strPidParam, yController);
+    protocolHandler.getterPidValue(strAxis, strPidParam, &yController);
   }
   else if (strAxis == "Z")
   {
-    getterPidValue(strAxis, strPidParam, zController);
+    protocolHandler.getterPidValue(strAxis, strPidParam, &zController);
   }
 }
 
+// execute the incoming command depending on received command
 void executeIncomingCommand()
 {
   if (strCommand == chrSetPid)
@@ -308,12 +260,14 @@ void loop()
     }
     else
     {
+      // adds terminator to message 
       message[message_pos] = '\0';
       paramPosition++;
       //delay(500);
       // Reset for the next message
       message_pos = 0;
 
+      // fill the incoming message into the correct string for later execution
       switch (paramPosition)
       {
       case command:
@@ -334,19 +288,17 @@ void loop()
 
       if (inByte == cmdTerminator)
       {
-        paramPosition = 0;
-        message_pos = 0;
-        executeIncomingCommand();
+        paramPosition = 0; // reset parameter position
+        message_pos = 0; // reset message position, read for new message
+        executeIncomingCommand(); // execute the incoming command
+        //delay(1000); // do wen need a delay here??
       }
     }
   }
 
-  if (DEBUG)
-  {
-    Serial.println("CURRENT VECT ANGLES: " + vectorToString(currentEulerAnglesVect) + " ANGLESPEED: " + vectorToString(anglespeedVect));
-  }
-  else
-  {
-    //sendFrame();
-  }  
+  protocolHandler.sendFrame(currentEulerAnglesVect.x, "X", chrAngleTransfer);
+  protocolHandler.sendFrame(currentEulerAnglesVect.y, "Y", chrAngleTransfer);
+  //protocolHandler.sendFrame(currentEulerAnglesVect.z, "Z", chrAngleTransfer); // not used yet
+  protocolHandler.sendFrame(accelVect.x, "X", chrMoveTransfer);
+  protocolHandler.sendFrame(accelVect.y, "Y", chrMoveTransfer);
 }
