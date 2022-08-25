@@ -16,6 +16,7 @@ vec3_t accelEulerAnglesVect   = {0,0,0}; //calculated acceleration angles
 vec3_t startVect              = {0,0,0}; //acceleration vector at start
 vec3_t currentEulerAnglesVect = {0,0,0}; // current orientation vector
 
+// threshold values for acceleration and gyro values
 float thresholdVect = 0.03;
 float thresholdGyro = 0.5;
 
