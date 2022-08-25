@@ -10,7 +10,8 @@ private:
   void sendPIDToSerial(float _fval, String _strAxis, String _strPidParam);
 
 public:    
-    void setterPidValue(String, float, PIDController*);
-    void getterPidValue(String, String, PIDController*);
+  void setterPidValue(String, float, PIDController*);
+  void getterPidValue(String, String, PIDController*);
+  void sendFrame(float, String axis, String cmd);
 };
 #endif

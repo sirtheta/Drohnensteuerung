@@ -39,3 +39,8 @@ void ProtocolHandler::getterPidValue(String _strAxis, String _strPidParam, PIDCo
     sendPIDToSerial(_pidCtrl->getPID_D(), _strAxis, _strPidParam);
   }
 }
+
+void ProtocolHandler::sendFrame(float fValue, String strAxis, String strCommand)
+{
+  Serial.println(strCommand + paramSeparator + strAxis + paramSeparator + fValue + cmdTerminator);
+}

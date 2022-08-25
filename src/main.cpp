@@ -177,17 +177,6 @@ void setup()
   initializeStartVector();
 }
 
-void sendFrame()
-{
-  float x     = currentEulerAnglesVect.x;
-  float y     = currentEulerAnglesVect.y;
-  float z     = currentEulerAnglesVect.z;
-  float moveX = accelVect.x;
-  float moveY = accelVect.y;
-
-  Serial.println(String(x) + ":" + String(y) + ":" + String(z) +":" + String(moveX) + ":" + String(moveY));
-}
-
 /***********************************************
  Protocol Definiton to send and receive PID Values
 ***********************************************
@@ -310,6 +299,10 @@ void loop()
   }
   else
   {
-    sendFrame();
+    protocolHandler.sendFrame(currentEulerAnglesVect.x, "X", chrAngleTransfer);
+    protocolHandler.sendFrame(currentEulerAnglesVect.y, "Y", chrAngleTransfer);
+    protocolHandler.sendFrame(currentEulerAnglesVect.z, "Z", chrAngleTransfer);
+    protocolHandler.sendFrame(accelVect.x, "X", chrMoveTransfer);
+    protocolHandler.sendFrame(accelVect.y, "Y", chrMoveTransfer);
   }  
 }
