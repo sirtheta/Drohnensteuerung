@@ -202,15 +202,15 @@ void setPidValue()
 {
   if (strAxis == "X")
   {
-    protocolHandler.setterPidValue(strPidParam, fValue, xController);
+    protocolHandler.setterPidValue(strPidParam, fValue, &xController);
   }
   else if (strAxis == "Y")
   {
-    protocolHandler.setterPidValue(strPidParam, fValue, yController);
+    protocolHandler.setterPidValue(strPidParam, fValue, &yController);
   }
   else if (strAxis == "Z")
   {
-    protocolHandler.setterPidValue(strPidParam, fValue, zController);
+    protocolHandler.setterPidValue(strPidParam, fValue, &zController);
   }
 }
 
@@ -219,15 +219,15 @@ void getPidValue()
 {
   if (strAxis == "X")
   {
-    protocolHandler.getterPidValue(strAxis, strPidParam, xController);
+    protocolHandler.getterPidValue(strAxis, strPidParam, &xController);
   }
   else if (strAxis == "Y")
   {
-    protocolHandler.getterPidValue(strAxis, strPidParam, yController);
+    protocolHandler.getterPidValue(strAxis, strPidParam, &yController);
   }
   else if (strAxis == "Z")
   {
-    protocolHandler.getterPidValue(strAxis, strPidParam, zController);
+    protocolHandler.getterPidValue(strAxis, strPidParam, &zController);
   }
 }
 
