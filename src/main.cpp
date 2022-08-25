@@ -299,6 +299,7 @@ void loop()
         paramPosition = 0;
         message_pos = 0;
         executeIncomingCommand();
+        //delay(1000); // do wen need a delay here??
       }
     }
   }
@@ -309,6 +310,6 @@ void loop()
   }
   else
   {
-    //sendFrame();
+    sendFrame();
   }  
 }
