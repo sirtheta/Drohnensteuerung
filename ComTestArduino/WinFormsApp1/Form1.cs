@@ -12,7 +12,7 @@ namespace WinFormsApp1
       btnDisconnect.Enabled = false;
     }
 
-    public SerialPort myport;
+    public SerialPort myport = new();
 
     private void send_Click(object sender, EventArgs e)
     {
@@ -28,7 +28,6 @@ namespace WinFormsApp1
 
     void Connect()
     {
-      myport = new SerialPort();
       try
       {
         myport.BaudRate = 9600;
@@ -41,15 +40,20 @@ namespace WinFormsApp1
       catch (Exception e)
       {
         label1.Text = e.Message;
+        return;
       }
-      finally
+      label2.Text = "Connected";
+      send.Enabled = true;
+      btnConnect.Enabled = false;
+      btnDisconnect.Enabled = true;
+    }
+
+    private void AddInputToTextBox(string indata)
+    {
+      label1.Invoke(new Action(() =>
       {
-        label1.Text = "connection successful";
-        label2.Text = "Connected";
-        send.Enabled = true;
-        btnConnect.Enabled = false;
-        btnDisconnect.Enabled = true;
-      }
+        label1.Text = indata;
+      }));
     }
 
     private void DataReceivedHandler(
@@ -58,10 +62,8 @@ namespace WinFormsApp1
     {
       SerialPort sp = (SerialPort)sender;
       string indata = sp.ReadExisting();
-      label1.Invoke(new Action(() =>
-      {
-        label1.Text = indata;
-      }));
+   
+      AddInputToTextBox(indata);
     }
 
     private void btnDisconnect_Click(object sender, EventArgs e)
