@@ -5,7 +5,7 @@
 #include <Arduino_LSM9DS1.h>
 #include <vector_type.h>
 #include <PID_controller.h>
-//#include <ProtocolHandler.h>
+#include <ProtocolHandler.h>
 #include "GlobalDefines.h"
 
 #define MAX_MESSAGE_LENGTH 20
@@ -48,7 +48,7 @@ float zCorrection;
 PIDController zController(pidPZ, pidIY, pidDY, &zCorrection);
 
 //Protocol Handler
-//ProtocolHandler protocolHandler;
+ProtocolHandler protocolHandler;
 
 String strCommand;
 String strAxis;
@@ -198,57 +198,19 @@ void sendFrame()
  example:
  PIDS|X|P|0.3;
 ***********************************************/
-void setterPidValue(String _strPidParam, float _fValue, PIDController _pidCtrl)
-{
-  if (_strPidParam == "P")
-  {
-    _pidCtrl.setPID_P(_fValue);
-  }
-  else if (_strPidParam == "I")
-  {
-    _pidCtrl.setPID_I(_fValue);
-  }
-  else if (_strPidParam == "D")
-  {
-    _pidCtrl.setPID_D(_fValue);
-  }
-}
-
-void sendPIDToSerial(float _fVal, String _strAxis, String _strPidParam)
-{
-  int iVal = _fVal * 10000; // transfer float to int because serial will only print two digits after comma
-  Serial.println(String(chrTransferPid) + String(paramSeparator) + _strAxis + String(paramSeparator) + _strPidParam + String(paramSeparator) + iVal + String(cmdTerminator));
-}
-
-void getterPidValue(String _strAxis, String _strPidParam, PIDController _pidCtrl)
-{
-  if (_strPidParam == "P")
-  {
-    sendPIDToSerial(_pidCtrl.getPID_P(), _strAxis, _strPidParam);
-  }
-  else if (_strPidParam == "I")
-  {
-    sendPIDToSerial(_pidCtrl.getPID_I(), _strAxis, _strPidParam);
-  }
-  else if (_strPidParam == "D")
-  {
-    sendPIDToSerial(_pidCtrl.getPID_D(), _strAxis, _strPidParam);
-  }
-}
-
 void setPidValue()
 {
   if (strAxis == "X")
   {
-    setterPidValue(strPidParam, fValue, xController);
+    protocolHandler.setterPidValue(strPidParam, fValue, xController);
   }
   else if (strAxis == "Y")
   {
-    setterPidValue(strPidParam, fValue, yController);
+    protocolHandler.setterPidValue(strPidParam, fValue, yController);
   }
   else if (strAxis == "Z")
   {
-    setterPidValue(strPidParam, fValue, zController);
+    protocolHandler.setterPidValue(strPidParam, fValue, zController);
   }
 }
 
@@ -257,15 +219,15 @@ void getPidValue()
 {
   if (strAxis == "X")
   {
-   getterPidValue(strAxis, strPidParam, xController);
+    protocolHandler.getterPidValue(strAxis, strPidParam, xController);
   }
   else if (strAxis == "Y")
   {
-    getterPidValue(strAxis, strPidParam, yController);
+    protocolHandler.getterPidValue(strAxis, strPidParam, yController);
   }
   else if (strAxis == "Z")
   {
-    getterPidValue(strAxis, strPidParam, zController);
+    protocolHandler.getterPidValue(strAxis, strPidParam, zController);
   }
 }
 
