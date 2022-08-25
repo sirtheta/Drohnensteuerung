@@ -1,7 +1,3 @@
-/*
-  INSERT MEANINGFULL COMMENT HERE :)
-*/
-
 #include <Arduino_LSM9DS1.h>
 #include <vector_type.h>
 #include <PID_controller.h>
@@ -50,11 +46,13 @@ PIDController zController(pidPZ, pidIY, pidDY, &zCorrection);
 //Protocol Handler
 ProtocolHandler protocolHandler;
 
+// Protocol data
 String strCommand;
 String strAxis;
 String strPidParam;
 float fValue;
 
+// param enum for protocol switchcase
 enum Param 
 {
   command = 1,
@@ -63,6 +61,7 @@ enum Param
   value = 4
 };
 
+// function to calculate the current angles
 void calculateCurrentAngles()
 {
   delay(5);
@@ -125,6 +124,7 @@ void readCorrectedGyro()
   }
 }
 
+// read current acceleration
 void readAccelerometer()
 {
   if (IMU.accelAvailable())
@@ -185,8 +185,17 @@ void setup()
  folowing by the axis Parameter X,Y or Z
  folowing with the P, I or D and the value to set
  example:
- PIDS|X|P|0.3;
+  PIDS|X|P|0.3;
+ example to get PID:
+  PIDR|X|P;
+example of requested transfered data:
+  PIDT|X|P|0.3;
+example for angle Frame:
+  ANGT|X|90.00;
+example for angle Frame:
+  MOVT|X|0.5;
 ***********************************************/
+// sets the received PID value via the setter method of the protocol handler
 void setPidValue()
 {
   if (strAxis == "X")
@@ -203,7 +212,8 @@ void setPidValue()
   }
 }
 
-
+// gets the current PID value from received command and sends it 
+// via the getter method of protocol handler
 void getPidValue()
 {
   if (strAxis == "X")
@@ -220,6 +230,7 @@ void getPidValue()
   }
 }
 
+// execute the incoming command depending on received command
 void executeIncomingCommand()
 {
   if (strCommand == chrSetPid)
@@ -265,6 +276,7 @@ void loop()
       // Reset for the next message
       message_pos = 0;
 
+      // fill the incoming message into the correct string for later execution
       switch (paramPosition)
       {
       case command:
@@ -285,9 +297,9 @@ void loop()
 
       if (inByte == cmdTerminator)
       {
-        paramPosition = 0;
-        message_pos = 0;
-        executeIncomingCommand();
+        paramPosition = 0; // reset parameter position
+        message_pos = 0; // reset message position, read for new message
+        executeIncomingCommand(); // execute the incoming command
         //delay(1000); // do wen need a delay here??
       }
     }

@@ -5,12 +5,12 @@
 
 PIDController::PIDController(float _p, float _i, float _d, float* _pOutput)
 {
-  p               = _p;
-  i               = _i;
-  d               = _d;
-  pOutput         = _pOutput;
-  error           = 0;
-  integralError   = 0;
+  p             = _p;
+  i             = _i;
+  d             = _d;
+  pOutput       = _pOutput;
+  error         = 0;
+  integralError = 0;
 }
 
 void PIDController::setPID_P(float _p)
@@ -41,6 +41,7 @@ float PIDController::getPID_D()
   return d;
 }
 
+// calculate the current error
 void PIDController::processError(float _error, float _dTime)
 {
   integralError += _error;

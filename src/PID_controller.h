@@ -20,7 +20,8 @@ private:
     float error;
     //integral error
     float integralError; 
-
+    
+    // pointer for output variable
     float* pOutput;
 public:
     PIDController(float _p, float _i, float _d, float* _pOutput);
