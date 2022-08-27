@@ -35,7 +35,7 @@ public class PIDGUI : MonoBehaviour
     public void RequestAndReadPIDs()
     {
         controller.RequestPIDs();
-        StartCoroutine(WaitForPIDs());
+        ReadPIDs();
     }
 
     public void ReadPIDs()
@@ -44,18 +44,13 @@ public class PIDGUI : MonoBehaviour
         {
             for(int j =0; j<3; j++)
             {
+                Debug.Log($"Write {controller.CurrentPIDs[i, j].ToString()} in {inputFields[i][j].name}");
                 inputFields[i][j].text = controller.CurrentPIDs[i, j].ToString();
             }
         }
 
     }
 
-    IEnumerator WaitForPIDs()
-    {
-        yield return new WaitForSeconds(2);
-
-        ReadPIDs();
-    }
 
     public void SetPIDs()
     {

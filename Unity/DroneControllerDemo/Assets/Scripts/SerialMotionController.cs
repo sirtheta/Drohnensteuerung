@@ -12,12 +12,10 @@ public class SerialMotionController : MonoBehaviour
     [Header("Serial Output")]
     [SerializeField]
     private string serialMonitor;
-    [SerializeField]
-    private Vector3 controllerEulerAngles = new Vector3();
-    [SerializeField]
-    private Vector3 controllerMotionVector = new Vector3();
 
     [Header("Options")]
+    [SerializeField]
+    private bool connectOnStartup;
     [SerializeField]
     private int serialBaudrate = 9600;
     [SerializeField]
@@ -29,6 +27,7 @@ public class SerialMotionController : MonoBehaviour
     #endregion
 
     #region PRIVATE FIELDS
+    [SerializeField]
     private bool portIsOpen = false;
     private Thread listenerThread = null;
     private SerialPort controllerPort = null;
@@ -53,6 +52,13 @@ public class SerialMotionController : MonoBehaviour
     public float[,] CurrentPIDs                  => currentPIDs;
     #endregion
 
+    private void Start()
+    {
+        if (connectOnStartup)
+        {
+            Connect();
+        }
+    }
 
     public void Connect()
     {
@@ -125,140 +131,100 @@ public class SerialMotionController : MonoBehaviour
         string[] data = _frame.Split('|');
         float value = 0;
 
-        if (data[0] == "ANGT")
+        if (data[0] == "DATT")
         {
- 
-            switch (data[1])
+            float xAVal = 0, yAVal = 0, zAVal = 0, xMVal = 0, yMVal = 0, zMVal = 0;
+
+            if(float.TryParse(data[1], out xAVal) &&
+               float.TryParse(data[2], out yAVal) &&
+               float.TryParse(data[4], out xMVal) &&
+               float.TryParse(data[5], out yMVal))
             {
-                case "X":
-                    if(!float.TryParse(data[2], out value))
-                    {
-                        Debug.LogError($"Parsing to float of param: {data[2]} not possible");
-                    }
-                    else
-                    {
-                        currControllerAngles.x =value;
-                    }
-                    break;
-
-                case "Y":
-
-                    if (!float.TryParse(data[2], out value))
-                    {
-                        Debug.LogError($"Parsing to float of param: {data[2]} not possible");
-                    }
-                    else
-                    {
-                        currControllerAngles.y = value;
-                    }
-                    break;
-
-                case "Z":
-                    if (!float.TryParse(data[2], out value))
-                    {
-                        Debug.LogError($"Parsing to float of param: {data[2]} not possible");
-                    }
-                    else
-                    {
-                        currControllerAngles.z = value;
-                    }
-                    break;
-
-                default:
-                    Debug.LogError("Invalid Parameter");
-                    break;
-            }
-    
-        }
-        else if (data[0] == "MOVT")
-        {
-            switch (data[1])
-            {
-                case "X":
-                    if (!float.TryParse(data[2], out value))
-                    {
-                        Debug.LogError($"Parsing to float of param: {data[2]} not possible");
-                    }
-                    else
-                    {
-                        currControllerAcceleration.x = value;
-                    }
-                    break;
-
-                case "Y":
-
-                    if (!float.TryParse(data[2], out value))
-                    {
-                        Debug.LogError($"Parsing to float of param: {data[2]} not possible");
-                    }
-                    else
-                    {
-                        currControllerAcceleration.y = value;
-                    }
-                    break;
-
-                case "Z":
-                    Debug.Log("AngleData");
-                    if (!float.TryParse(data[2], out value))
-                    {
-                        Debug.LogError($"Parsing to float of param: {data[2]} not possible");
-                    }
-                    else
-                    {
-                        //currControllerAcceleration.z = value;
-                    }
-                    break;
-
-                default:
-                    Debug.LogError("Invalid Parameter");
-                    break;
+                currControllerAngles.x = xAVal;
+                currControllerAngles.y = yAVal;
+                currControllerAcceleration.x = xMVal;
+                currControllerAcceleration.y = yMVal;
             }
 
-
+        
         }
         else if (data[0] == "PIDT")
         {
-            float value_i = 0;
-            float value_d = 0;
+           
             switch (data[1])
             {
                 case "X":
-                    if (!(float.TryParse(data[2], out value) && float.TryParse(data[3], out value_i) && float.TryParse(data[4], out value_d)))
+                    if (!(float.TryParse(data[3], out value)))
                     {
-                        Debug.LogError($"Parsing to float of param: {data[2]} or {data[3]} or {data[4]} not possible");
+                        Debug.LogError($"Parsing to float of param: {data[3]} not possible");
                     }
                     else
                     {
-                        currentPIDs[0, 0] = value/10000;
-                        currentPIDs[0, 1] = value_i / 10000;
-                        currentPIDs[0, 2] = value_d / 10000;
+                        switch (data[2])
+                        {
+                            case "P":
+                                Debug.Log("Received P of X");
+                                currentPIDs[0, 0] = value / 10000;
+                                break;
+                            case "I":
+                                currentPIDs[0, 1] = value / 10000;
+                                break;
+                            case "D":
+                                currentPIDs[0, 2] = value / 10000;
+                                break;
+                            default:
+                                break;
+                        }
+  
                     }
                     break;
 
                 case "Y":
 
-                    if (!(float.TryParse(data[2], out value) && float.TryParse(data[3], out value_i) && float.TryParse(data[4], out value_d)))
+                    if (!(float.TryParse(data[3], out value)))
                     {
-                        Debug.LogError($"Parsing to float of param: {data[2]} or {data[3]} or {data[4]} not possible");
+                        Debug.LogError($"Parsing to float of param:{data[3]} not possible");
                     }
                     else
                     {
-                        currentPIDs[1, 0] = value / 10000;
-                        currentPIDs[1, 1] = value_i / 10000;
-                        currentPIDs[1, 2] = value_d / 10000;
+                        switch (data[2])
+                        {
+                            case "P":
+                                currentPIDs[1, 0] = value / 10000;
+                                break;
+                            case "I":
+                                currentPIDs[1, 1] = value / 10000;
+                                break;
+                            case "D":
+                                currentPIDs[1, 2] = value / 10000;
+                                break;
+                            default:
+                                break;
+                        }
                     }
                     break;
 
                 case "Z":
-                    if (!(float.TryParse(data[2], out value) && float.TryParse(data[3], out value_i) && float.TryParse(data[4], out value_d)))
+                    if (!(float.TryParse(data[3], out value)))
                     {
-                        Debug.LogError($"Parsing to float of param: {data[2]} or {data[3]} or {data[4]} not possible");
+                        Debug.LogError($"Parsing to float of param:  {data[3]} not possible");
                     }
                     else
                     {
-                        currentPIDs[1, 0] = value / 10000;
-                        currentPIDs[1, 1] = value_i / 10000;
-                        currentPIDs[1, 2] = value_d / 10000;
+                        switch (data[2])
+                        {
+                            case "P":
+                                currentPIDs[2, 0] = value / 10000;
+                                break;
+                            case "I":
+                                currentPIDs[2, 1] = value / 10000;
+                                break;
+                            case "D":
+                                currentPIDs[2, 2] = value / 10000;
+                                break;
+                            default:
+                                break;
+                        }
                     }
                     break;
 
@@ -276,9 +242,15 @@ public class SerialMotionController : MonoBehaviour
     {
         if(!portIsOpen) { return; }
 
-        controllerPort.Write("PIDR|X;");
-        controllerPort.Write("PIDR|Y;");
-        controllerPort.Write("PIDR|Z;");
+        controllerPort.Write("PIDR|X|P;");
+        controllerPort.Write("PIDR|X|D;");
+        controllerPort.Write("PIDR|X|I;");
+        controllerPort.Write("PIDR|Y|P;");
+        controllerPort.Write("PIDR|Y|D;");
+        controllerPort.Write("PIDR|Y|I;");
+        controllerPort.Write("PIDR|Z|P;");
+        controllerPort.Write("PIDR|Z|D;");
+        controllerPort.Write("PIDR|Z|I;");
     }
 
     public void SetPIDs(float[,] _pids)
@@ -290,7 +262,7 @@ public class SerialMotionController : MonoBehaviour
         {
             for(int j = 0; j < 3; j++)
             {
-                controllerPort.WriteLine($"PIDS|{axis[i]}|{param[j]}|{_pids[i, j] * 10000};");
+                controllerPort.WriteLine($"PIDS|{axis[i]}|{param[j]}|{_pids[i, j]};");
             }
         }
 

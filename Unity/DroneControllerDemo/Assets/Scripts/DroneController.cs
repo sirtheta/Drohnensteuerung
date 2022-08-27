@@ -16,6 +16,8 @@ public class DroneController : MonoBehaviour
     Vector3 targetAngles = Vector3.zero;
     Vector3 speed = Vector3.zero;
 
+    public Vector3 Speed => speed;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -27,7 +29,6 @@ public class DroneController : MonoBehaviour
     {
         RotateDrone();
         MoveDrone();
-        //Debug.Log(controller.CurrControllerAngles);
     }
 
     void RotateDrone()
@@ -44,7 +45,6 @@ public class DroneController : MonoBehaviour
     {
         speed.z += -controller.CurrControllerAcceleration.x * Time.deltaTime * accelFactor;
         speed.x += -controller.CurrControllerAcceleration.y * Time.deltaTime * accelFactor;
-        Debug.LogError(controller.CurrControllerAcceleration);
 
         this.transform.position = this.transform.position + speed * Time.deltaTime;
     }
