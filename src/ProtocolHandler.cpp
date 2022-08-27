@@ -1,6 +1,23 @@
 #include "ProtocolHandler.h"
 #include "GlobalDefines.h"
 
+/***********************************************
+ Protocol Definiton to send and receive PID Values
+***********************************************
+ setPidValues:
+ string must start with: "PIDS"
+ folowing by the axis Parameter X,Y or Z
+ folowing with the P, I or D and the value to set
+ example to set PID:
+  PIDS|X|P|0.3;
+ example to get PID:
+  PIDR|X|P;
+example of requested transfered data when requested via PIDR:
+  PIDT|X|P|0.3;
+example of Dataframe:
+  DATT|X|Y|Z|X|Y|Z
+  DATT|90.05|90.2|3.5|0.1|0.01|1.05
+***********************************************/
 
 // function to set the incoming PID value
 void ProtocolHandler::setterPidValue(String _strPidParam, float _fValue, PIDController* _pidCtrl)

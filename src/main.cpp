@@ -167,24 +167,6 @@ void setup()
   initializeStartVector();
 }
 
-/***********************************************
- Protocol Definiton to send and receive PID Values
-***********************************************
- setPidValues:
- string must start with: "PIDS"
- folowing by the axis Parameter X,Y or Z
- folowing with the P, I or D and the value to set
- example:
-  PIDS|X|P|0.3;
- example to get PID:
-  PIDR|X|P;
-example of requested transfered data:
-  PIDT|X|P|0.3;
-example for angle Frame:
-  ANGT|X|90.00;
-example for angle Frame:
-  MOVT|X|0.5;
-***********************************************/
 // sets the received PID value via the setter method of the protocol handler
 void setPidValue()
 {
