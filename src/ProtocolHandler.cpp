@@ -60,3 +60,16 @@ void ProtocolHandler::sendFrame(float fValue, String strAxis, String strCommand)
                  fValue + 
                  cmdTerminator);
 }
+
+//sends a float array
+void ProtocolHandler::sendDataFrame(float _iData[], int _iDataLength)
+{
+  String frame = chrDataTransfer;
+
+  for(int i =0; i < _iDataLength ;i++)
+  {
+    frame = frame + paramSeparator + String(_iData[i]);
+  }
+
+  Serial.println(frame);
+}

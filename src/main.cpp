@@ -296,9 +296,17 @@ void loop()
     }
   }
 
-  protocolHandler.sendFrame(currentEulerAnglesVect.x, "X", chrAngleTransfer);
-  protocolHandler.sendFrame(currentEulerAnglesVect.y, "Y", chrAngleTransfer);
-  //protocolHandler.sendFrame(currentEulerAnglesVect.z, "Z", chrAngleTransfer); // not used yet
-  protocolHandler.sendFrame(accelVect.x, "X", chrMoveTransfer);
-  protocolHandler.sendFrame(accelVect.y, "Y", chrMoveTransfer);
+  //float array to send:
+  float data[]
+  {
+    currentEulerAnglesVect.x,
+    currentEulerAnglesVect.y,
+    currentEulerAnglesVect.z,
+    accelVect.x,
+    accelVect.y,
+    accelVect.z
+  };
+  //sending float array as dataframe
+  protocolHandler.sendDataFrame(data,6);
+
 }

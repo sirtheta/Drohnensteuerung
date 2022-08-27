@@ -13,5 +13,6 @@ public:
   void setterPidValue(String param, float value, PIDController* controller);
   void getterPidValue(String axis, String param, PIDController* controller);
   void sendFrame(float, String axis, String cmd);
+  void sendDataFrame(float[], int);
 };
 #endif

@@ -5,3 +5,4 @@ static char chrReadPid[5] = "PIDR";
 static char chrTransferPid[5] = "PIDT";
 static char chrAngleTransfer[5] = "ANGT";
 static char chrMoveTransfer[5] = "MOVT";
+static char chrDataTransfer[5] = "DATT";
