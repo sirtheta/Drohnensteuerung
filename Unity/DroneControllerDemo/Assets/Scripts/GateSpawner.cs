@@ -46,6 +46,5 @@ public class GateSpawner : MonoBehaviour
     public void Reset()
     {
         lastSpawnedAt = 0;
-        SpawnGate();
     }
 }
