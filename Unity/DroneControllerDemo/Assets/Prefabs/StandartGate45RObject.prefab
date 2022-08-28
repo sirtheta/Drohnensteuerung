@@ -212,7 +212,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   drawGizmos: 1
   pointsReward: 5
-  gateMesh: {fileID: 909043602018172502}
+  gateMesh:
+  - {fileID: 909043602018172502}
   gateLight: {fileID: 2230016058347193874}
   gateMaterialApproach: {fileID: 2100000, guid: 1f45f534135f70845865fa6bef0dbab4,
     type: 2}
@@ -269,6 +270,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   objectsToDisable:
   - {fileID: 7206414011561637326}
+  length: 0
 --- !u!1 &7830911462395676926
 GameObject:
   m_ObjectHideFlags: 0

@@ -6,7 +6,7 @@ using UnityEngine;
 public class GateSpawner : MonoBehaviour
 {
     [SerializeField]
-    private GameObject[] gatePrefabs;
+    private Gate[] gatePrefabs;
     [SerializeField]
     private float gateSpacing;
     [SerializeField]
@@ -39,10 +39,11 @@ public class GateSpawner : MonoBehaviour
     private void SpawnGate()
     {
         int randomIndex = UnityEngine.Random.Range(0, gatePrefabs.Length);
-        Transform newGate = GameObject.Instantiate(gatePrefabs[randomIndex]).transform;
+
+        Transform newGate = GameObject.Instantiate(gatePrefabs[randomIndex].gameObject).transform;
         newGate.transform.parent = objectParent;
         newGate.position = this.transform.position + new Vector3(UnityEngine.Random.Range(-gateSpreading / 2, gateSpreading / 2), 0, 0);
-        lastSpawnedAt = GameManager.instance.DistanceTravelled;
+        lastSpawnedAt = GameManager.instance.DistanceTravelled + gatePrefabs[randomIndex].length;
     }
 
     public void Reset()

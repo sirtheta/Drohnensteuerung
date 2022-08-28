@@ -1146,7 +1146,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   gatePrefabs:
-  - {fileID: 4289069757247906492, guid: 7acfedfdca0b1c945b59214910fcb932, type: 3}
+  - {fileID: 7054860083735125852, guid: 7acfedfdca0b1c945b59214910fcb932, type: 3}
   gateSpacing: 10
   gateSpreading: 0.1
   objectParent: {fileID: 209034038}
@@ -1180,9 +1180,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   gatePrefabs:
-  - {fileID: 5357642131321071258, guid: 3867cd741c9b9dc49ad5074ed14b83f4, type: 3}
-  - {fileID: 5357642131321071258, guid: 45ab515a9125e8e41b0ebf95f4613e57, type: 3}
-  - {fileID: 5357642131321071258, guid: 655d0aabd5c43394c8b8392e9b3e66cd, type: 3}
+  - {fileID: 4019547719213090511, guid: 655d0aabd5c43394c8b8392e9b3e66cd, type: 3}
+  - {fileID: 7642077773272324012, guid: 5dbabc6dd2d049f4cb81205df22721ad, type: 3}
+  - {fileID: 4019547719213090511, guid: 3867cd741c9b9dc49ad5074ed14b83f4, type: 3}
+  - {fileID: 4019547719213090511, guid: 45ab515a9125e8e41b0ebf95f4613e57, type: 3}
   gateSpacing: 50
   gateSpreading: 5
   objectParent: {fileID: 209034038}
@@ -8828,9 +8829,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   drone: {fileID: 2001912985}
-  distanceToDespawn: -50
-  distanceToDisable: -5
-  maxSpeed: 30
+  distanceToDespawn: -100
+  distanceToDisable: -40
+  maxSpeed: 35
   maxNegSpeed: -30
   movementSpeed: 0
   distanceTravelled: 0
@@ -9867,7 +9868,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   gatePrefabs:
-  - {fileID: 4289069757247906492, guid: 7acfedfdca0b1c945b59214910fcb932, type: 3}
+  - {fileID: 7054860083735125852, guid: 7acfedfdca0b1c945b59214910fcb932, type: 3}
   gateSpacing: 10
   gateSpreading: 0.1
   objectParent: {fileID: 209034038}
@@ -10292,10 +10293,11 @@ MonoBehaviour:
   minPos: {fileID: 777733078}
   maxPos: {fileID: 1234540465}
   correctIonAcceleration: 50
-  smoothing: 0.95
-  accelFactorLR: 20
+  smoothing: 0.9
+  accelFactorLR: 60
   accelFactorFB: 40
   angleOffsets: {x: -90, y: 0, z: 90}
+  accelerationOffset: -0.25
 --- !u!65 &2001912982
 BoxCollider:
   m_ObjectHideFlags: 0

@@ -21,6 +21,8 @@ public class DroneController : MonoBehaviour
     private float accelFactorFB;
     [SerializeField]
     private Vector3 angleOffsets;
+    [SerializeField]
+    private float accelerationOffset;
 
     Vector3 targetAngles = Vector3.zero;
     Vector3 speed = Vector3.zero;
@@ -64,7 +66,7 @@ public class DroneController : MonoBehaviour
         }
         else
         {
-            //StopGround();
+            StopGround();
         }
     }
 
@@ -106,7 +108,7 @@ public class DroneController : MonoBehaviour
 
     void StopGround()
     {
-        speed.z = Mathf.Lerp(speed.z, 0, Time.deltaTime);
+        speed.z = Mathf.Lerp(speed.z, 0, Time.deltaTime * 2);
         GameManager.instance.MovementSpeed = speed.z;
     }
 
@@ -123,7 +125,9 @@ public class DroneController : MonoBehaviour
     void MoveDrone()
     {
         Vector3 corrVect = CheckBoundaries();
-        speed.z += -controller.CurrControllerAcceleration.x * Time.deltaTime * accelFactorFB;
+
+        speed.z += -controller.CurrControllerAcceleration.x + accelerationOffset * Time.deltaTime * accelFactorFB;
+
         if (corrVect.magnitude == 0)
         {
             speed.x += -controller.CurrControllerAcceleration.y * Time.deltaTime * accelFactorLR;
@@ -159,8 +163,6 @@ public class DroneController : MonoBehaviour
     {
         moveDrone = false;
         droneRb.useGravity = true;
-        droneRb.velocity = speed * 2;
-        speed.z = 0;
-        GameManager.instance.MovementSpeed = 0;
+        droneRb.velocity = speed;
     }
 }

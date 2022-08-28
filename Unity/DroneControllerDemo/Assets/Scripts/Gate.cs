@@ -10,6 +10,8 @@ public class Gate : MonoBehaviour
 
     private bool disabled = false;
 
+    public float length = 0;
+
     // Start is called before the first frame update
     void Start()
     {
