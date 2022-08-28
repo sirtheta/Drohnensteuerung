@@ -35,6 +35,7 @@ public class GameManager : MonoBehaviour
     public float MaxSpeed { get => maxSpeed; set => maxSpeed = value; }
     public float MaxNegSpeed { get => maxNegSpeed; set => maxNegSpeed = value; }
     public CurvedWorldController CurvedWorldController { get => curvedWorldController; set => curvedWorldController = value; }
+    public int CurrentPoints => currentPoints;
 
     private void Awake()
     {
@@ -105,6 +106,11 @@ public class GameManager : MonoBehaviour
         movementSpeed = 0;
         currentPoints = 0;
         Time.timeScale = 1;
+    }
+
+    public void AddPoints(int _points)
+    {
+        currentPoints += _points;
     }
 
     public void ExitGame()
