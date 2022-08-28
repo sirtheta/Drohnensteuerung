@@ -6,7 +6,8 @@ using AmazingAssets.CurvedWorld;
 public class GameManager : MonoBehaviour
 {
     public static GameManager instance;
-
+    [SerializeField]
+    private Transform drone;
     [SerializeField]
     private float distanceToDespawn;
     [SerializeField]
@@ -40,6 +41,7 @@ public class GameManager : MonoBehaviour
     public int CurrentPoints => currentPoints;
 
     public float DistancetoDisable { get => distanceToDisable; set => distanceToDisable = value; }
+    public Transform Drone => drone; 
 
     private void Awake()
     {

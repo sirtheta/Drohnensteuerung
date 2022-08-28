@@ -1192,7 +1192,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 188210532}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 50}
+  m_LocalPosition: {x: 0, y: 1.8, z: 50}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
@@ -3128,7 +3128,7 @@ GameObject:
   m_Component:
   - component: {fileID: 742460670}
   - component: {fileID: 742460671}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Area Light
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -5520,7 +5520,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1123082047}
   - component: {fileID: 1123082048}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Area Light
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -5956,6 +5956,16 @@ PrefabInstance:
       propertyPath: m_Materials.Array.data[0]
       value: 
       objectReference: {fileID: 2100000, guid: e3f5b9b7341a94e4ab55b8ccb8989a7f, type: 2}
+    - target: {fileID: -5786456068483193366, guid: af8a40cef1e9b8046bf7fd7b4668387e,
+        type: 3}
+      propertyPath: m_Layer
+      value: 8
+      objectReference: {fileID: 0}
+    - target: {fileID: -5294867470563886892, guid: af8a40cef1e9b8046bf7fd7b4668387e,
+        type: 3}
+      propertyPath: m_Layer
+      value: 8
+      objectReference: {fileID: 0}
     - target: {fileID: -5012063610939160433, guid: af8a40cef1e9b8046bf7fd7b4668387e,
         type: 3}
       propertyPath: m_Materials.Array.data[0]
@@ -5966,6 +5976,31 @@ PrefabInstance:
       propertyPath: m_Materials.Array.data[0]
       value: 
       objectReference: {fileID: 2100000, guid: 67a46956d549e3e4bb266709462e1801, type: 2}
+    - target: {fileID: -2420675887171715547, guid: af8a40cef1e9b8046bf7fd7b4668387e,
+        type: 3}
+      propertyPath: m_Layer
+      value: 8
+      objectReference: {fileID: 0}
+    - target: {fileID: -1554149636004485360, guid: af8a40cef1e9b8046bf7fd7b4668387e,
+        type: 3}
+      propertyPath: m_Layer
+      value: 8
+      objectReference: {fileID: 0}
+    - target: {fileID: -1283873029933098549, guid: af8a40cef1e9b8046bf7fd7b4668387e,
+        type: 3}
+      propertyPath: m_Layer
+      value: 8
+      objectReference: {fileID: 0}
+    - target: {fileID: -1145647889531003304, guid: af8a40cef1e9b8046bf7fd7b4668387e,
+        type: 3}
+      propertyPath: m_Layer
+      value: 8
+      objectReference: {fileID: 0}
+    - target: {fileID: -187532577323898067, guid: af8a40cef1e9b8046bf7fd7b4668387e,
+        type: 3}
+      propertyPath: m_Layer
+      value: 8
+      objectReference: {fileID: 0}
     - target: {fileID: 473744144056221398, guid: af8a40cef1e9b8046bf7fd7b4668387e,
         type: 3}
       propertyPath: m_Materials.Array.data[0]
@@ -5986,11 +6021,31 @@ PrefabInstance:
       propertyPath: m_Name
       value: SimpleDrone
       objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: af8a40cef1e9b8046bf7fd7b4668387e,
+        type: 3}
+      propertyPath: m_Layer
+      value: 8
+      objectReference: {fileID: 0}
     - target: {fileID: 1376524749511653590, guid: af8a40cef1e9b8046bf7fd7b4668387e,
         type: 3}
       propertyPath: m_Materials.Array.data[0]
       value: 
       objectReference: {fileID: 2100000, guid: e3f5b9b7341a94e4ab55b8ccb8989a7f, type: 2}
+    - target: {fileID: 2086456985366359874, guid: af8a40cef1e9b8046bf7fd7b4668387e,
+        type: 3}
+      propertyPath: m_Layer
+      value: 8
+      objectReference: {fileID: 0}
+    - target: {fileID: 2889341178273822563, guid: af8a40cef1e9b8046bf7fd7b4668387e,
+        type: 3}
+      propertyPath: m_Layer
+      value: 8
+      objectReference: {fileID: 0}
+    - target: {fileID: 3701092362770673631, guid: af8a40cef1e9b8046bf7fd7b4668387e,
+        type: 3}
+      propertyPath: m_Layer
+      value: 8
+      objectReference: {fileID: 0}
     - target: {fileID: 4622517118747729382, guid: af8a40cef1e9b8046bf7fd7b4668387e,
         type: 3}
       propertyPath: m_Materials.Array.data[0]
@@ -7220,7 +7275,7 @@ AudioSource:
   m_PlayOnAwake: 1
   m_Volume: 0.05
   m_Pitch: 1
-  Loop: 0
+  Loop: 1
   Mute: 0
   Spatialize: 0
   SpatializePostEffects: 0
@@ -7326,7 +7381,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1356990919}
   - component: {fileID: 1356990920}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Area Light
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -8000,7 +8055,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1449625811}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: DroneParent
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -8444,6 +8499,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: eba4ed2c39b25cf42b7249cc9100adef, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  drone: {fileID: 2001912985}
   distanceToDespawn: -50
   distanceToDisable: -5
   maxSpeed: 50
@@ -9786,7 +9842,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1978322613}
   - component: {fileID: 1978322614}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Area Light
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -9883,7 +9939,7 @@ GameObject:
   - component: {fileID: 2001912982}
   - component: {fileID: 2001912981}
   - component: {fileID: 2001912986}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: DronePlane
   m_TagString: Drone
   m_Icon: {fileID: 0}
