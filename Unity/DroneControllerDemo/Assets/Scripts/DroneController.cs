@@ -16,7 +16,9 @@ public class DroneController : MonoBehaviour
     [SerializeField]
     private float smoothing;
     [SerializeField]
-    private float accelFactor;
+    private float accelFactorLR;
+    [SerializeField]
+    private float accelFactorFB;
     [SerializeField]
     private Vector3 angleOffsets;
 
@@ -95,10 +97,10 @@ public class DroneController : MonoBehaviour
     void MoveDrone()
     {
         Vector3 corrVect = CheckBoundaries();
-        speed.z += -controller.CurrControllerAcceleration.x * Time.deltaTime * accelFactor;
+        speed.z += -controller.CurrControllerAcceleration.x * Time.deltaTime * accelFactorFB;
         if (corrVect.magnitude == 0)
         {
-            speed.x += -controller.CurrControllerAcceleration.y * Time.deltaTime * accelFactor;
+            speed.x += -controller.CurrControllerAcceleration.y * Time.deltaTime * accelFactorLR;
         }
         else
         {
@@ -112,7 +114,10 @@ public class DroneController : MonoBehaviour
 
         if (GameManager.instance != null)
         {
-            if (speed.z > GameManager.instance.MaxSpeed) { speed.z = GameManager.instance.MaxSpeed; }
+            if (speed.z > GameManager.instance.MaxSpeed)
+            {
+                speed.z = GameManager.instance.MaxSpeed;
+            }
             GameManager.instance.MovementSpeed = speed.z;
         }
 

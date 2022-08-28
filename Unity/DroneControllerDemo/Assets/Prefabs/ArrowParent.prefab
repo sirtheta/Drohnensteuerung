@@ -44,6 +44,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2c82066e2ea409b49b43fbfa7825a06c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  objectsToDisable:
+  - {fileID: 4088960784672343048}
+  - {fileID: 4530155925707470965}
+  renderersToDisable: []
 --- !u!1 &4530155925707470965
 GameObject:
   m_ObjectHideFlags: 0
@@ -244,6 +248,12 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 691209f11b2207c4e9176f0eeb46c7a7, type: 3}
+--- !u!1 &4088960784672343048 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 919132149155446097, guid: 691209f11b2207c4e9176f0eeb46c7a7,
+    type: 3}
+  m_PrefabInstance: {fileID: 3782885125892143449}
+  m_PrefabAsset: {fileID: 0}
 --- !u!4 &3743960820994121394 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: 691209f11b2207c4e9176f0eeb46c7a7,

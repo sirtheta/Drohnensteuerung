@@ -61,7 +61,7 @@ Rigidbody:
   m_IsKinematic: 1
   m_Interpolate: 0
   m_Constraints: 0
-  m_CollisionDetection: 3
+  m_CollisionDetection: 0
 --- !u!114 &1741339835731622184
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -100,12 +100,12 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1749716239303459303}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalRotation: {x: -0, y: -0.7071067, z: -0.7071068, w: 0}
+  m_LocalPosition: {x: 0, y: -0.2, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
-  m_Father: {fileID: 8019085678949642100}
-  m_RootOrder: 9
+  m_Father: {fileID: 5676858603878774994}
+  m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!82 &4499698218018289888
 AudioSource:
@@ -264,7 +264,7 @@ Rigidbody:
   m_IsKinematic: 1
   m_Interpolate: 0
   m_Constraints: 0
-  m_CollisionDetection: 3
+  m_CollisionDetection: 0
 --- !u!114 &6851892304939666366
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -311,6 +311,7 @@ Transform:
   - {fileID: 8019085678949642100}
   - {fileID: 5725818292771649348}
   - {fileID: 1643164998427068186}
+  - {fileID: 3976819330942954}
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 180, z: 0}
@@ -326,6 +327,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2c82066e2ea409b49b43fbfa7825a06c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  objectsToDisable:
+  - {fileID: 7206414011561637326}
+  - {fileID: 1424955639309926384}
+  - {fileID: 2587714019145652593}
 --- !u!114 &6795288864009003804
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -564,6 +569,12 @@ PrefabInstance:
       objectReference: {fileID: 2100000, guid: 9ba6f84acaace5248a69b885c4b8d54d, type: 2}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 4d1ddc870d5faf04483712e2a8a52d26, type: 3}
+--- !u!1 &7206414011561637326 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 919132149155446097, guid: 4d1ddc870d5faf04483712e2a8a52d26,
+    type: 3}
+  m_PrefabInstance: {fileID: 7548941779203672223}
+  m_PrefabAsset: {fileID: 0}
 --- !u!4 &8019085678949642100 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: 4d1ddc870d5faf04483712e2a8a52d26,

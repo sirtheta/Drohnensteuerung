@@ -8,7 +8,9 @@ public class GameManager : MonoBehaviour
     public static GameManager instance;
 
     [SerializeField]
-    private float distancetoDespawn;
+    private float distanceToDespawn;
+    [SerializeField]
+    private float distanceToDisable;
     [SerializeField]
     private float maxSpeed;
     [SerializeField]
@@ -31,11 +33,13 @@ public class GameManager : MonoBehaviour
 
     public float MovementSpeed { get => movementSpeed; set => movementSpeed = value; }
     public float DistanceTravelled { get => distanceTravelled; set => distanceTravelled = value; }
-    public float DistancetoDespawn { get => distancetoDespawn; set => distancetoDespawn = value; }
+    public float DistancetoDespawn { get => distanceToDespawn; set => distanceToDespawn = value; }
     public float MaxSpeed { get => maxSpeed; set => maxSpeed = value; }
     public float MaxNegSpeed { get => maxNegSpeed; set => maxNegSpeed = value; }
     public CurvedWorldController CurvedWorldController { get => curvedWorldController; set => curvedWorldController = value; }
     public int CurrentPoints => currentPoints;
+
+    public float DistancetoDisable { get => distanceToDisable; set => distanceToDisable = value; }
 
     private void Awake()
     {
