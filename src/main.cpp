@@ -8,6 +8,7 @@
 #define MAX_MESSAGE_LENGTH 20
 
 bool DEBUG = false;
+bool verticalMode = true; //set to true if you're using the 3D-Printed joystick
 
 vec3_t anglespeedVect         = {0,0,0}; //anglespeed readings of the gyro
 vec3_t accelVect              = {0,0,0}; //acceleration readings
@@ -117,7 +118,17 @@ void readCorrectedGyro()
 {
   if (IMU.gyroAvailable()) 
   {
-    IMU.readGyro(anglespeedVect.x,anglespeedVect.y,anglespeedVect.z);
+     //vertical mode switches and inverses axis accordingly
+    if(verticalMode)
+    {
+        IMU.readGyro(anglespeedVect.z,anglespeedVect.x,anglespeedVect.y);
+        anglespeedVect = -anglespeedVect;
+    }
+    else
+    {
+      IMU.readGyro(anglespeedVect.x,anglespeedVect.y,anglespeedVect.z);
+    }    
+    
   }
 }
 
@@ -126,7 +137,16 @@ void readAccelerometer()
 {
   if (IMU.accelAvailable())
   {
-    IMU.readAccel(accelVect.x,accelVect.y,accelVect.z);
+     //vertical mode switches and inverses axis accordingly
+    if(verticalMode)
+    {
+        IMU.readAccel(accelVect.z,accelVect.x,accelVect.y);
+        accelVect = -accelVect;
+    }
+    else
+    {
+      IMU.readAccel(accelVect.x,accelVect.y,accelVect.z);
+    }    
   }
 }
 
