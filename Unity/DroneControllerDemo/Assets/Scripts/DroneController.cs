@@ -29,6 +29,9 @@ public class DroneController : MonoBehaviour
     float speedRange = 0;
     float zMovementRange = 0;
 
+    bool moveDrone = true;
+    Rigidbody droneRb;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -38,15 +41,31 @@ public class DroneController : MonoBehaviour
             speedRange = GameManager.instance.MaxSpeed - GameManager.instance.MaxNegSpeed;
         }
 
+        droneRb = GetComponent<Rigidbody>();
         zMovementRange = maxPos.position.z - minPos.position.z;
+    }
+
+    public void ResetDrone()
+    {
+        speed = Vector3.zero;
+        droneRb.useGravity = false;
+        droneRb.velocity = Vector3.zero;
+        moveDrone = true;
     }
 
     // Update is called once per frame
     void FixedUpdate()
     {
-        RotateDrone();
+        if (moveDrone)
+        {
+            RotateDrone();
 
-        MoveDrone();
+            MoveDrone();
+        }
+        else
+        {
+            //StopGround();
+        }
     }
 
     private Vector3 CheckBoundaries()
@@ -82,6 +101,13 @@ public class DroneController : MonoBehaviour
 
             return correctionVector;
         }
+
+    }
+
+    void StopGround()
+    {
+        speed.z = Mathf.Lerp(speed.z, 0, Time.deltaTime);
+        GameManager.instance.MovementSpeed = speed.z;
     }
 
     void RotateDrone()
@@ -125,7 +151,16 @@ public class DroneController : MonoBehaviour
 
         this.transform.position = new Vector3(this.transform.position.x, this.transform.position.y, zPos);
 
+        
 
+    }
 
+    private void OnCollisionEnter(Collision collision)
+    {
+        moveDrone = false;
+        droneRb.useGravity = true;
+        droneRb.velocity = speed * 2;
+        speed.z = 0;
+        GameManager.instance.MovementSpeed = 0;
     }
 }

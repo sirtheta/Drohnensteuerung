@@ -6,14 +6,15 @@ using UnityEngine;
 public class GateSpawner : MonoBehaviour
 {
     [SerializeField]
-    private GameObject standartGatePrefab;
+    private GameObject[] gatePrefabs;
     [SerializeField]
     private float gateSpacing;
     [SerializeField]
     private float gateSpreading;
     [SerializeField]
     private Transform objectParent;
-
+    
+    
     private float lastSpawnedAt = 0;
 
     // Start is called before the first frame update
@@ -37,7 +38,8 @@ public class GateSpawner : MonoBehaviour
 
     private void SpawnGate()
     {
-        Transform newGate = GameObject.Instantiate(standartGatePrefab).transform;
+        int randomIndex = UnityEngine.Random.Range(0, gatePrefabs.Length);
+        Transform newGate = GameObject.Instantiate(gatePrefabs[randomIndex]).transform;
         newGate.transform.parent = objectParent;
         newGate.position = this.transform.position + new Vector3(UnityEngine.Random.Range(-gateSpreading / 2, gateSpreading / 2), 0, 0);
         lastSpawnedAt = GameManager.instance.DistanceTravelled;

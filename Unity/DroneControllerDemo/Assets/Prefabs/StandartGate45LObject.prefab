@@ -1,6 +1,6 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
---- !u!65 &8406776163400826214
+--- !u!65 &4928576380212103893
 BoxCollider:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -11,9 +11,9 @@ BoxCollider:
   m_IsTrigger: 0
   m_Enabled: 1
   serializedVersion: 2
-  m_Size: {x: 0.20000009, y: 0.20000076, z: 4.1000004}
-  m_Center: {x: -0.0000009536743, y: -0.00000036659037, z: 2.0500002}
---- !u!65 &9038706805891308307
+  m_Size: {x: 0.20000021, y: 0.20000058, z: 4.100001}
+  m_Center: {x: -0.00000054538975, y: 0.0000000062718755, z: 2.0500007}
+--- !u!65 &3742715097011879615
 BoxCollider:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -24,9 +24,9 @@ BoxCollider:
   m_IsTrigger: 0
   m_Enabled: 1
   serializedVersion: 2
-  m_Size: {x: 0.20000009, y: 0.20000076, z: 4.1000004}
-  m_Center: {x: 0.0000009536743, y: -0.00000036659037, z: 2.0500002}
---- !u!64 &3406083370439973653
+  m_Size: {x: 0.20000021, y: 0.20000058, z: 4.100001}
+  m_Center: {x: 0.00000040828454, y: -0.00000047056528, z: 2.0500002}
+--- !u!64 &2348338872674980240
 MeshCollider:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -233,7 +233,7 @@ GameObject:
   - component: {fileID: 5676858603878774994}
   - component: {fileID: 4019547719213090511}
   m_Layer: 0
-  m_Name: StandartGateObject
+  m_Name: StandartGate45LObject
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -392,22 +392,22 @@ PrefabInstance:
     - target: {fileID: -8679921383154817045, guid: 4d1ddc870d5faf04483712e2a8a52d26,
         type: 3}
       propertyPath: m_LocalRotation.w
-      value: 0
+      value: 0.27055082
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 4d1ddc870d5faf04483712e2a8a52d26,
         type: 3}
       propertyPath: m_LocalRotation.x
-      value: -0
+      value: -0.2706453
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 4d1ddc870d5faf04483712e2a8a52d26,
         type: 3}
       propertyPath: m_LocalRotation.y
-      value: -0.7069834
+      value: -0.6531675
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 4d1ddc870d5faf04483712e2a8a52d26,
         type: 3}
       propertyPath: m_LocalRotation.z
-      value: -0.7072302
+      value: -0.65339553
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 4d1ddc870d5faf04483712e2a8a52d26,
         type: 3}
@@ -417,7 +417,7 @@ PrefabInstance:
     - target: {fileID: -8679921383154817045, guid: 4d1ddc870d5faf04483712e2a8a52d26,
         type: 3}
       propertyPath: m_LocalEulerAnglesHint.y
-      value: 0
+      value: 45
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 4d1ddc870d5faf04483712e2a8a52d26,
         type: 3}

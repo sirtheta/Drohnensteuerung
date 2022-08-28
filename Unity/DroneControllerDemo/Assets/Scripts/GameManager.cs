@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 using AmazingAssets.CurvedWorld;
 
 public class GameManager : MonoBehaviour
@@ -28,6 +29,10 @@ public class GameManager : MonoBehaviour
     private GateSpawner[] spawners;
     [SerializeField]
     private int currentPoints;
+    [SerializeField]
+    private Text seedText;
+    [SerializeField]
+    private string seed;
 
     private List<Transform> transformsToResetOnRestart = new List<Transform>();
     private List<Vector3> startPosOftransformsToResetOnSRestart = new List<Vector3>();
@@ -41,7 +46,9 @@ public class GameManager : MonoBehaviour
     public int CurrentPoints => currentPoints;
 
     public float DistancetoDisable { get => distanceToDisable; set => distanceToDisable = value; }
-    public Transform Drone => drone; 
+    public Transform Drone => drone;
+
+    public string Seed { get => seed; set => seed = value; }
 
     private void Awake()
     {
@@ -112,6 +119,12 @@ public class GameManager : MonoBehaviour
         movementSpeed = 0;
         currentPoints = 0;
         Time.timeScale = 1;
+    }
+
+    public void SetSeed()
+    {
+        seed = seedText.text;
+        UnityEngine.Random.InitState(seed.GetHashCode());
     }
 
     public void AddPoints(int _points)
