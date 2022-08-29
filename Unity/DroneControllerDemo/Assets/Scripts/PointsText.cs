@@ -7,6 +7,11 @@ using TMPro;
 public class PointsText : MonoBehaviour
 {
     TMP_Text text;
+    public Color normalColor;
+    public Color pointsAddedColor;
+    public float colorLerpSpeed;
+    public float scaleFactor;
+   
     // Start is called before the first frame update
     void Start()
     {
@@ -19,6 +24,15 @@ public class PointsText : MonoBehaviour
     {
         if (GameManager.instance != null)
         {
+            if (GameManager.instance.PointsAdded)
+            {
+                GameManager.instance.PointsAdded = false;
+                text.color = pointsAddedColor;
+                transform.localScale = transform.localScale * scaleFactor;
+            }
+
+            transform.localScale = Vector3.Lerp(transform.localScale, Vector3.one, Time.deltaTime * colorLerpSpeed);
+            text.color = Color.Lerp(text.color, normalColor, Time.deltaTime * colorLerpSpeed);
             text.text = GameManager.instance.CurrentPoints.ToString();
         }
     }

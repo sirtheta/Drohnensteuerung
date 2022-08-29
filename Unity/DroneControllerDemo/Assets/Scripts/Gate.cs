@@ -24,11 +24,11 @@ public class Gate : MonoBehaviour
         if (GameManager.instance != null)
         {
             transform.position += transform.forward * GameManager.instance.MovementSpeed * Time.deltaTime;
-            if (this.transform.position.z < GameManager.instance.DistancetoDespawn)
+            if (this.transform.position.z + length < GameManager.instance.DistancetoDespawn)
             {
                 Destroy(gameObject);
             }
-            else if (this.transform.position.z < GameManager.instance.DistancetoDisable)
+            else if (this.transform.position.z + length < GameManager.instance.DistancetoDisable)
             {
                 objectsToDisable.ForEach(x => x.SetActive(false));
                 disabled = true;

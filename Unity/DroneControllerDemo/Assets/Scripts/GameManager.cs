@@ -36,6 +36,7 @@ public class GameManager : MonoBehaviour
 
     private List<Transform> transformsToResetOnRestart = new List<Transform>();
     private List<Vector3> startPosOftransformsToResetOnSRestart = new List<Vector3>();
+    private bool pointsAdded;
 
     public float MovementSpeed { get => movementSpeed; set => movementSpeed = value; }
     public float DistanceTravelled { get => distanceTravelled; set => distanceTravelled = value; }
@@ -49,6 +50,7 @@ public class GameManager : MonoBehaviour
     public Transform Drone => drone;
 
     public string Seed { get => seed; set => seed = value; }
+    public bool PointsAdded { get => pointsAdded; set => pointsAdded = value; }
 
     private void Awake()
     {
@@ -78,6 +80,11 @@ public class GameManager : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.Escape))
         {
             ExitGame();
+        }
+
+        if (Input.GetKeyDown(KeyCode.R))
+        {
+            RestartGame();
         }
     }
 
@@ -130,6 +137,7 @@ public class GameManager : MonoBehaviour
     public void AddPoints(int _points)
     {
         currentPoints += _points;
+        pointsAdded = true;
     }
 
     public void ExitGame()

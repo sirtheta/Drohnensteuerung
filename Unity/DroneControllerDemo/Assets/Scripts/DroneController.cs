@@ -23,6 +23,8 @@ public class DroneController : MonoBehaviour
     private Vector3 angleOffsets;
     [SerializeField]
     private float accelerationOffset;
+    [SerializeField]
+    private ParticleSystem sparks;
 
     Vector3 targetAngles = Vector3.zero;
     Vector3 speed = Vector3.zero;
@@ -31,6 +33,7 @@ public class DroneController : MonoBehaviour
     float speedRange = 0;
     float zMovementRange = 0;
 
+    bool sparksPlayed = false;
     bool moveDrone = true;
     Rigidbody droneRb;
 
@@ -53,6 +56,7 @@ public class DroneController : MonoBehaviour
         droneRb.useGravity = false;
         droneRb.velocity = Vector3.zero;
         moveDrone = true;
+        sparksPlayed = false;
     }
 
     // Update is called once per frame
@@ -155,7 +159,7 @@ public class DroneController : MonoBehaviour
 
         this.transform.position = new Vector3(this.transform.position.x, this.transform.position.y, zPos);
 
-        
+
 
     }
 
@@ -164,5 +168,14 @@ public class DroneController : MonoBehaviour
         moveDrone = false;
         droneRb.useGravity = true;
         droneRb.velocity = speed;
+
+        if (sparksPlayed == false)
+        {
+            sparksPlayed = true;
+            sparks.transform.position = collision.GetContact(0).point;
+            sparks.transform.LookAt(this.transform.up);
+            sparks.Play();
+        }
+
     }
 }

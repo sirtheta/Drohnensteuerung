@@ -11,7 +11,7 @@ public class GateController : MonoBehaviour
     [SerializeField]
     private List<MeshRenderer> gateMesh;
     [SerializeField]
-    private Light gateLight;
+    private Light gateLight = null;
     [SerializeField]
     private Material gateMaterialApproach;
     [SerializeField]
@@ -89,7 +89,10 @@ public class GateController : MonoBehaviour
         if (passed) { return; }
         passed = true;
         gateMesh.ForEach(x => x.material = gateMaterialPassed);
-        gateLight.color = gatePassedApproach;
+        if (gateLight != null)
+        {
+            gateLight.color = gatePassedApproach;
+        }
         sound.Play();
         GameManager.instance.AddPoints(pointsReward);
     }
