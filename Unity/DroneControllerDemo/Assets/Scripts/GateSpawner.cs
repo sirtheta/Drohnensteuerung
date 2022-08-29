@@ -13,6 +13,8 @@ public class GateSpawner : MonoBehaviour
     private float gateSpreading;
     [SerializeField]
     private Transform objectParent;
+    [SerializeField]
+    private Gate michaelPrefab;
     
     
     private float lastSpawnedAt = 0;
@@ -38,12 +40,24 @@ public class GateSpawner : MonoBehaviour
 
     private void SpawnGate()
     {
-        int randomIndex = UnityEngine.Random.Range(0, gatePrefabs.Length);
+        if (michaelPrefab!= null &&GameManager.instance.Seed.ToLower() == "michael")
+        {
+            Transform newGate = GameObject.Instantiate(michaelPrefab.gameObject).transform;
+            newGate.transform.parent = objectParent;
+            newGate.position = this.transform.position;
+            lastSpawnedAt = GameManager.instance.DistanceTravelled -10;
+        }
+        else
+        {
 
-        Transform newGate = GameObject.Instantiate(gatePrefabs[randomIndex].gameObject).transform;
-        newGate.transform.parent = objectParent;
-        newGate.position = this.transform.position + new Vector3(UnityEngine.Random.Range(-gateSpreading / 2, gateSpreading / 2), 0, 0);
-        lastSpawnedAt = GameManager.instance.DistanceTravelled + gatePrefabs[randomIndex].length;
+            int randomIndex = UnityEngine.Random.Range(0, gatePrefabs.Length);
+
+
+            Transform newGate = GameObject.Instantiate(gatePrefabs[randomIndex].gameObject).transform;
+            newGate.transform.parent = objectParent;
+            newGate.position = this.transform.position + new Vector3(UnityEngine.Random.Range(-gateSpreading / 2, gateSpreading / 2), 0, 0);
+            lastSpawnedAt = GameManager.instance.DistanceTravelled + gatePrefabs[randomIndex].length;
+        }
     }
 
     public void Reset()

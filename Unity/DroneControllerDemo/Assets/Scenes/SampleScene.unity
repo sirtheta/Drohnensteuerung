@@ -1150,6 +1150,7 @@ MonoBehaviour:
   gateSpacing: 10
   gateSpreading: 0.1
   objectParent: {fileID: 209034038}
+  michaelPrefab: {fileID: 0}
 --- !u!1 &188210532
 GameObject:
   m_ObjectHideFlags: 0
@@ -1188,6 +1189,8 @@ MonoBehaviour:
   gateSpacing: 50
   gateSpreading: 5
   objectParent: {fileID: 209034038}
+  michaelPrefab: {fileID: 5357642131321071258, guid: 8d7d44d5506c6d74ba4e04f0b02db18c,
+    type: 3}
 --- !u!4 &188210534
 Transform:
   m_ObjectHideFlags: 0
@@ -15028,6 +15031,7 @@ MonoBehaviour:
   gateSpacing: 10
   gateSpreading: 0.1
   objectParent: {fileID: 209034038}
+  michaelPrefab: {fileID: 0}
 --- !u!1 &1910297720
 GameObject:
   m_ObjectHideFlags: 0
