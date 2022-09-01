@@ -1,0 +1,26 @@
+@startuml sendAngles
+!theme plain
+skinparam dpi 300
+left to right direction
+actor "Human" as human
+rectangle "Drone controller" {
+  usecase "Move controller" as UC1
+  usecase "set PID" as UC2
+  usecase "read PID" as UC4
+}
+
+rectangle "Demo game" as game { 
+  usecase "adjust PID" as UC3
+  usecase "read PID" as inc1
+  usecase "set PID" as inc2
+  usecase "connect/ \n disconect" as UC5
+}
+
+human -- UC1
+UC2 -- game
+UC4 -- game
+human -- UC3 
+human -- UC5
+UC3 --> inc1: <<include>>
+UC3 --> inc2: <<include>>
+@enduml
