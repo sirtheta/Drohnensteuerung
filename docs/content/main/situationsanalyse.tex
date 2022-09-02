@@ -1,0 +1,54 @@
+\section{Situationsanalyse}
+
+Im Rahmen der Gruppenarbeit im Fach Embedded Systems wollen wir mit dem Arduino Nano 33 BLE Sense ein Projekt durchführen.\\
+Der Arduino Nano liefert gleich mehrere verbaute Sensoren mit. Unter anderem ist auf dem Board ein 9-achsige Trägheitsmesseinheit verbaut, welche uns auf die Idee brachte, eine Drohne mit diesem Sensor zu steuern.\\
+In der weiteren Analyse hat sich aber gezeigt, dass das Protokoll zum Senden an die Drohne nicht so einfach umzusetzen ist. Aus diesem Grund haben wir uns dann entschieden, eine einfache Simulation mit Unity zu erstellen, welche mit dem Arduino Nano gesteuert werden kann.
+
+\subsection{Technische Details Arduino Nano 33 BLE Sense}
+Hier werden die wichtigsten Daten des Arduino Boards tabellarisch aufgelistet:
+
+\begin{table}[H]
+  %\centering
+  \settowidth\tymin{\textbf{MP34DT05}}
+  \setlength\extrarowheight{2pt}
+  \begin{tabulary}{1.0\textwidth}{|L|L|}
+    \hline
+    Takt &
+    64Mhz\\
+    \hline
+    Bit & 32 \\
+    \hline
+    Mikrocontroller& nRF52840 \\
+    \hline
+    Flash & 1024KB \\
+    \hline
+    SRAM&  256KB\\
+    \hline
+    Anschlüsse& USB, I2C, SPI, Bluetooth \\
+    \hline
+    \textbf{LSM9DS1}& \textbf{Das LSM9DS1 ist ein System-in-Package mit einem 3D-Digital-Linearbeschleunigungssensor, ein 3D-Digital Winkelgeschwindigkeitssensor und ein digitaler 3D-Magnet Sensor.\newline
+    Das LSM9DS1 hat einen linearen Beschleunigungsendwert von ± 2 g / ± 4 g / ± 8 / ± 16 g, ein Magnetfeld mit voller Skala von ±4/±8/±12/±16 Gauss und einer Winkelgeschwindigkeit von ±245/±500/±2000 dps.
+    } \\
+    \hline
+    LPS22HB& Sensor für den barometrischen Druck und die Umgebungstemperatur\newline
+    Der Barometer hat eine Range von 260 bis 1260 hPa. 
+     \\
+    \hline
+    HTS221 & Kapazitiver Digitalsensor für relative Feuchte und Temperatur\newline
+    0 bis 100\% relative Feuchte mit einer Genauigkeit von ±3.5\%rH\newline
+    Der Temperatursensor misst im Range von 15 bis 40°C mit einer Genauigkeit von ±0.5°C und im Range von 0 bis 60°C mit einer Genauigkeit von ±1°C 
+     \\
+    \hline
+    ADPS-9960& Digitaler Näherungs-, Umgebungslicht-, RGB- und Gestensensor \\
+    \hline
+    MP34DT05& Digitales Mikrofon, z.B. für Spracherkennung \\
+    \hline
+  \end{tabulary}
+  \caption{Technische Details}
+\end{table}
+
+
+\subsection{Variantenauswahl}
+Variantenauswahl
+
+\newpage
