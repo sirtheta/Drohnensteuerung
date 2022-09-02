@@ -1,0 +1,56 @@
+\usepackage[a4paper,top=2cm,bottom=2.5cm,left=1.5cm,right=1.5cm,marginparwidth=1.75cm]{geometry}
+
+% Language setting
+\usepackage[ngerman]{babel}
+% deutsche Umlaute
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+
+%Schriftart
+\renewcommand{\familydefault}{\sfdefault}
+
+\usepackage[activate]{microtype}
+%Abb. anstatt Abbildung
+\renewcaptionname{ngerman}{\figurename}{Abb.}
+\usepackage[dcucite]{harvard}
+\renewcommand{\harvardand}{und}
+
+%damit nur fref verwendet werden kann umm einen verweis auf eine Abbildung einzufügen
+\newcommand{\fref}[1]{\figurename\ \ref{#1}}
+
+%Schriftgrösse Abb. und Tabelle
+\usepackage{caption}
+\captionsetup[figure]{font=scriptsize}
+\captionsetup[table]{font=scriptsize}
+
+%um Tabellen farblich zu gestalten
+\usepackage[table]{xcolor}
+
+\usepackage{float}
+% Useful packages
+\usepackage{amsmath}
+\usepackage{graphicx}
+\usepackage[colorlinks=true, allcolors=black]{hyperref}
+\setlength{\parindent}{0pt}
+\usepackage{setspace}
+%Keine Silbentrennung
+% \usepackage[none]{hyphenat}
+\tolerance=1
+\emergencystretch=\maxdimen 
+\hbadness=10000
+% to use a for loop
+\usepackage{pgffor}
+
+%Tabellen mit Zeilenumbruch
+\usepackage{tabulary} 
+\usepackage{tabularx} 
+
+\usepackage{scrlayer-fancyhdr}
+% Turn on the style
+\pagestyle{fancy}
+% Clear the footer
+\fancyfoot{}
+% Set the right side of the footer to be the page number
+\fancyfoot[R]{Seite | \thepage}
+
+\usepackage{pdfpages}
