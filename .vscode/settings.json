@@ -1,0 +1,4 @@
+{
+    "plantuml.exportOutDir": "docs/content/diagram/out",
+    "plantuml.exportSubFolder": false
+}
