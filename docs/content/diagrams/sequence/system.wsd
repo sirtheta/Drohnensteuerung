@@ -3,11 +3,14 @@
 !theme plain
 skinparam dpi 300
 
-actor "Human" as client
-participant "Arduino" as arduino
-participant "Unity" as unity
+!pragma teoz true
+actor       "Human"             as client
+box         "Arduino Nano33BLE" #LightBlue
+participant "Arduino System"    as arduino
+end box
+participant "Demo Game"         as game
 
 client -> arduino: motion input
 arduino -> arduino: callculate angles
-arduino -> unity: send angles to unity
+arduino -> game: send angles to game
 @enduml

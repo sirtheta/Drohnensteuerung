@@ -1,0 +1,19 @@
+@startuml connect
+
+!theme plain
+skinparam dpi 500
+
+!pragma teoz true
+actor       "Human"             as client
+box         "Arduino Nano33BLE" #LightBlue
+box         "nRF52"             #LightCyan
+participant "Main"              as main
+end box
+end box
+participant "Demo Game"         as game
+
+client -> game: connect()
+game -> game: establishSerialConnection()
+game --> client: connectionState()
+main -> game: inititalizeGyroscope()
+@enduml

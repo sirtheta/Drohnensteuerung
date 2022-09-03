@@ -1,4 +1,4 @@
-@startuml sendAngles
+@startuml usecaseControl
 !theme plain
 skinparam dpi 300
 left to right direction

@@ -21,7 +21,7 @@ sensors   -->   main:       GyroData
 sensors   -->   main:       AccelData
 main      ->    main:       Check Accel > 1G
 '=============================================
-loop Accel > 1G  
+alt Accel > 1G  
 main      ->    pid:        RunPID(GyroData, TimeDelta)  
 '--------------------------------------------
 else Accel < 1G

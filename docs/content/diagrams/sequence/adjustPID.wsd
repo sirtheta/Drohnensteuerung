@@ -1,0 +1,34 @@
+@startuml
+
+!theme plain
+skinparam dpi 500
+
+!pragma teoz true
+actor       "Human"             as client
+box         "Arduino Nano33BLE" #LightBlue
+box         "nRF52"             #LightCyan
+participant "Main"              as main
+participant "PID Controller"    as pid
+participant "Protocol Handler"  as protocol
+end box
+end box
+participant "Demo Game"         as game
+
+'===========================
+' readPID
+'===========================
+client -> game: readPID()
+game -> main: requestPID()
+main -> protocol: getPIDValue()
+protocol -> pid: getPID()
+pid --> protocol: returnPID()
+protocol --> game: sendRequestedPID()
+
+'===========================
+' setPID
+'===========================
+client -> game: setPID()
+game -> main: sendPIDValue()
+main -> protocol: setPIDValue()
+protocol -> pid: setValue()
+@enduml
