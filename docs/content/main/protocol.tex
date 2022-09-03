@@ -1,0 +1,44 @@
+Um mit dem Arduino die Game-Demo zu steuern, mussten wir ein entsprechendes Protokoll zum senden und empfangen der Daten implementieren. Mit dem Arduino werden über Serial.println die Daten als string versendet.\\
+
+Das Protokoll haben wir wie folgt definiert:
+
+\begin{itemize}
+  \item Jeder Befehl, ob ausgehend oder eingehend startet mit vier chars, gefolgt von einer pipe ''|'' als Trennzeichen. Zum Abschluss des Befehl muss ein Semikolon '';'gesendet werden.
+  \item Setzen der PID-Werte:
+  \begin{itemize}
+    \item Beispiel: \textbf{PIDS|X|P|0.3;}
+    \item Der eingehende string muss mit PIDS starten. Das ''S'' steht für SET.
+    \item Der zweite char spezifiziert für welche Achse der Wert gesetzt werden soll. X, Y oder Z.
+    \item Der dritte char definiert welcher Wert, ob P, I oder D.
+    \item Nach der letzten Pipe wird der zu setzende Wert übertragen.
+  \end{itemize}
+  \item  Anfordern von PID-Werten:
+  \begin{itemize}
+    \item Beispiel: \textbf{PIDR|X|I;}
+    \item Der eingehende string muss mit PIDR starten. Das ''R'' steht für READ.
+    \item Der zweite char spezifiziert für welche Achse der Wert gelesen werden soll. X, Y oder Z.
+    \item Der dritte char definiert welcher Wert, ob P, I oder D.
+  \end{itemize}
+  \item  Zurücksenden der angeforderten PID-Daten:
+  \begin{itemize}
+    \item Beispiel: \textbf{PIDT|X|I|0.3;}
+    \item Der ausgehende string muss mit PIDT starten. Das ''T'' steht für Transfer.
+    \item Der zweite char spezifiziert für welche Achse der Wert gesendet wird. X, Y oder Z.
+    \item Der dritte char definiert welcher Wert, ob P, I oder D.
+    \item Nach der letzten Pipe wird der gelesene Wert übertragen.
+  \end{itemize}
+  \item Senden des Data-Frames zum Steuern der Game-Demo
+  \begin{itemize}
+    \item Beispiel: \textbf{DATT|90.05|90.2|3.5|0.1|0.01|1.05}
+    \item Der ausgehende string muss mit DATT starten.
+    \item Die drei ersten Werte liefern die Gyro-Achswerte für X, Y und Z.
+    \item Die drei letzten Werte liefern die Acceletometer-Werte für X, Y und Z
+    \item DATT|X|Y|Z|X|Y|Z
+  \end{itemize}
+\end{itemize} 
+
+\subsubsection{Datenempfang}
+Um die Daten über die Serialschnittstelle empfangen zu können, wird in der loop()-Funktion geprüft ob eine Nachricht eingeht. Ist dies der Fall, wird mit Serial.read() jeder char der eingehenden Nachricht in einen Buffer abgefüllt und ausgewertet. Durch die genaue Definition des Protokolls kann dann der Befehl ausgewertet und anschliessend ausgeführt werden.
+
+\subsubsection{Senden der Daten}
+Die PID-Daten werden je Achse und je PID-Term separat versendet. Um die Drohne im Game zu steuern, wollten wir dies ebenfalls so implementieren, dies führte jedoch zu nicht besonders flüssigem Spielverhalten. Aus diesem Grund haben wir uns entschieden, immer alle X,Y und Z- Werte auf einmal zu versenden.
