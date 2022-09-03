@@ -38,8 +38,8 @@ class ProtocolHandler
 {
   setterPidValue()
   getterPidValue()
-  sendFrame()
   sendDataFrame()
+  sendPIDToSerial()
 }
 
 @enduml

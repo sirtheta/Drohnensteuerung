@@ -38,10 +38,10 @@
   \end{center}
 \end{figure}
 
-\subsection{Beschreibung der Klassen}
+\subsection{Beschreibung der Klassen und Funktionen}
 In diesem Kapitel werden die benutzten Klassen und deren Funktion kurz beschrieben.
 \subsubsection{''main'' Klasse}
-Die ''main'' Klasse ist die hauptklasse welche alle anderen Klassen Importiert. Hier befindet sich ebenfalls die setup() Funktion und die loop() Funktion welche vom Arduinosystem vorgeben sind.
+Die ''main'' Klasse ist die hauptklasse welche alle anderen Klassen Importiert. Hier befindet sich ebenfalls die setup() Funktion und die loop() Funktion welche im Arduino vorgeben sind.
 
 \begin{table}[H]
   \centering
@@ -49,14 +49,14 @@ Die ''main'' Klasse ist die hauptklasse welche alle anderen Klassen Importiert. 
   \setlength\extrarowheight{2pt}
   \begin{tabulary}{1.0\textwidth}{|L|L|}
     \hline
-    \textbf{Klasse} &
+    \textbf{Funktion} &
     \textbf{Beschreibung}\\
     \hline
     setup() &
     Setupfunktion des Arduino. Wird ausgeführt wenn der Arduino gestartet wird.\\
     \hline
     loop() &
-    Sie ist eine Endlosschleife, die nach jedem Durchlauf erneut aufgerufen wird.\\
+    Der Loop ist eine Endlosschleife, der nach jedem Durchlauf erneut aufgerufen wird.\\
     \hline
     initializeGyroscope() &
     Mit dieser Funktion wird das Gyroskop beim einschalten initialisiert und kalibriert.\\
@@ -87,5 +87,50 @@ Die ''main'' Klasse ist die hauptklasse welche alle anderen Klassen Importiert. 
 \end{table}
 
 \subsubsection{PID Controller}
+TODO
+\begin{table}[H]
+  \centering
+  \settowidth\tymin{processError()}
+  \setlength\extrarowheight{2pt}
+  \begin{tabulary}{1.0\textwidth}{|L|L|}
+    \hline
+    \textbf{Funktion} &
+    \textbf{Beschreibung}\\
+    \hline
+    processError() & \\
+    \hline
+    setPID\_() & Setzt den eingehenden Wert einsprechend für P, I oder D. \\
+    \hline
+    getPID\_() & Sendet den aktuellen P,I oder D- Wert zurück.\\
+    \hline
+  \end{tabulary}
+  \caption{Beschreibung PIDController}
+\end{table}
+
 
 \subsubsection{ProtocolHandler}
+Mit dem ProtocolHandler wird das sende und empfangsprotokoll zum Steuern des Gamedemos kontrolliert.
+\begin{table}[H]
+  \centering
+  \settowidth\tymin{sendPIDToSerial()}
+  \setlength\extrarowheight{2pt}
+  \begin{tabulary}{1.0\textwidth}{|L|L|}
+    \hline
+    \textbf{Funktion} &
+    \textbf{Beschreibung}\\
+    \hline
+    setterPidValue() &
+    Wertet den eingegangen Befehl zum setzen des PID-Werts aus und führt dann die entsprechende Funktion über den PIDController aus. \\
+    \hline
+    getterPidValue() &
+    Wertet den eingegangen Befehl zum lesen des Aktuellen PID-Werts aus, holt sich den wert über den PIDController und sendet diesen über die Funktion sendPIDToSerial() zurück.\\
+    \hline
+    sendPIDToSerial() & 
+    Wird durch getterPIDValue() aufgerufen und sendet PID-Wert über Serial.println() als string zurück.\\
+    \hline
+    sendDataFrame() &
+    Wird durch den loop() aufgerufen und sendet die berechneten Gyro- und Beschleunigungsdaten Serial.println() als string an das Demo-Game.\\
+    \hline
+  \end{tabulary}
+  \caption{Beschreibung ProtocolHandler}
+\end{table}
