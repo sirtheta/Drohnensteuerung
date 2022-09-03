@@ -1,0 +1,16 @@
+@startuml
+
+!theme plain
+skinparam dpi 300
+
+!pragma teoz true
+actor       "Human"             as client
+box         "Arduino Nano33BLE" #LightBlue
+participant "Arduino System"    as arduino
+end box
+participant "Demo Game"         as game
+
+client -> arduino: motion input
+arduino -> arduino: callculate angles
+arduino -> game: send angles to game
+@enduml

@@ -1,0 +1,65 @@
+@startuml
+!include https://raw.githubusercontent.com/cristianopimentel/puml-clean-theme/main/deployment-diagram.puml
+
+' "Based on https://www.pinterest.com/pin/48202658490696590/"
+
+rectangle company <<internal>><<firewalled>> {
+    rectangle "Datacenter N" as datacenterN {
+        collections "Cluster Manager" as clusterManagerB #pink
+
+        rectangle "Frontend Layer" as frontEndLayerB {
+            collections "Frontend Node\nRouter Library" as frontEndNodeB #green
+        }
+        rectangle "Data Layer" as dataLayerB {
+            collections "Data Node" as dataNodeB #blue
+            database "Disk A" as diskB1
+            database "Disk N" as diskBN
+
+            dataNodeB --> diskB1
+            dataNodeB --> diskBN
+        }
+
+        card Client as clientB #Yellow
+
+        clientB --> frontEndLayerB : HTTP
+        frontEndLayerB --> dataLayerB
+        clusterManagerB -> frontEndLayerB
+        clusterManagerB -> dataLayerB
+    }
+
+    rectangle "Datacenter A" as datacenterA {
+        collections "Cluster Manager" as clusterManagerA #pink
+
+        rectangle "Frontend Layer" as frontEndLayerA {
+            collections "Frontend Node\nRouter Library" as frontEndNodeA #green
+        }
+        rectangle "Data Layer" as dataLayerA {
+            collections "Data Node" as dataNodeA #blue
+            database "Disk A" as diskA1
+            database "Disk N" as diskAN
+
+            dataNodeA --> diskA1
+            dataNodeA --> diskAN
+        }
+
+        card Client as clientA #Yellow
+
+        clientA --> frontEndLayerA : HTTP
+        frontEndLayerA --> dataLayerA
+        clusterManagerA -> frontEndLayerA
+        clusterManagerA -> dataLayerA
+    }
+
+    datacenterA <.> datacenterN
+}
+
+card "CDN" as cdnA <<new>>
+cdnA ---> frontEndLayerA
+
+card "CDN" as cdnB <<update>>
+cdnB ---> frontEndLayerB
+
+actor user
+user --> cdnA : HTTPS
+user --> cdnB : HTTPS
+@enduml

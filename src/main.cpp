@@ -4,28 +4,28 @@
 #include <ProtocolHandler.h>
 #include <GlobalDefines.h>
 
-// max length of incoming message
+// Max length of incoming message
 #define MAX_MESSAGE_LENGTH 20
 
 bool DEBUG = false;
-bool verticalMode = true; //set to true if you're using the 3D-Printed joystick
+bool verticalMode = true; // Set to true if you're using the 3D-Printed joystick
 
-vec3_t anglespeedVect         = {0,0,0}; //anglespeed readings of the gyro
-vec3_t accelVect              = {0,0,0}; //acceleration readings
-vec3_t accelEulerAnglesVect   = {0,0,0}; //calculated acceleration angles
+vec3_t anglespeedVect         = {0,0,0}; // Anglespeed readings of the gyro
+vec3_t accelVect              = {0,0,0}; // Acceleration readings
+vec3_t accelEulerAnglesVect   = {0,0,0}; // Calculated acceleration angles
 
-vec3_t startVect              = {0,0,0}; //acceleration vector at start
-vec3_t currentEulerAnglesVect = {0,0,0}; // current orientation vector
+vec3_t startVect              = {0,0,0}; // Acceleration vector at start
+vec3_t currentEulerAnglesVect = {0,0,0}; // Current orientation vector
 
-// threshold values for acceleration and gyro values
+// Threshold values for acceleration and gyro values
 float thresholdVect = 0.03;
 float thresholdGyro = 0.5;
 
 float timeStamp     = 0;
-// initalise parameter position, used for incoming messages
+// Initalise parameter position, used for incoming messages
 short paramPosition = 0;
 
-//initial PID Values
+// Initial PID Values
 // can be overwritten via protocol
 float fPidP = 0.3;
 float fPidI = 0.03;
@@ -36,12 +36,12 @@ float xCorrection;
 float yCorrection;
 float zCorrection;
 
-//PID CONTROLLERS
+// PID CONTROLLERS
 PIDController xController(fPidP, fPidI, fPidD, &xCorrection);
 PIDController yController(fPidP, fPidI, fPidD, &yCorrection);
 PIDController zController(fPidP, fPidI, fPidD, &zCorrection);
 
-//Protocol Handler
+// Protocol Handler
 ProtocolHandler protocolHandler;
 
 // Protocol data
@@ -50,7 +50,7 @@ String strAxis;
 String strPidParam;
 float fValue;
 
-// param enum for protocol switchcase
+// Param enum for protocol switchcase
 enum Param 
 {
   command = 1,
@@ -59,27 +59,27 @@ enum Param
   value = 4
 };
 
-// function to calculate the current angles
+// Function to calculate the current angles
 void calculateCurrentAngles()
 {
   delay(5);
 
-  //flag if sensor is beeing accelerated
+  // Flag if sensor is beeing accelerated
   bool accelerating = !(accelVect.mag() < startVect.mag() + thresholdVect && accelVect.mag() > startVect.mag() - thresholdVect);
-  //calculate time delta
+  // Calculate time delta
   float dTime = (millis() - timeStamp)/1000;
 
-  //calculate errors
+  // Calculate errors
   float xError = accelerating ? anglespeedVect.x * dTime : accelEulerAnglesVect.x - currentEulerAnglesVect.x;
   float yError = accelerating ? anglespeedVect.y * dTime : accelEulerAnglesVect.y - currentEulerAnglesVect.y;
   float zError = anglespeedVect.y * dTime;
 
-  //running PID loops for correcting the current angles
+  // Running PID loops for correcting the current angles
   xController.processError(xError, dTime);
   yController.processError(yError, dTime);
   zController.processError(zError, dTime);
 
-  //applying corrections to current angles
+  // Applying corrections to current angles
   currentEulerAnglesVect.x += xCorrection;
   currentEulerAnglesVect.y += yCorrection;
   currentEulerAnglesVect.z += zCorrection;
@@ -87,7 +87,7 @@ void calculateCurrentAngles()
   timeStamp = millis();
 }
 
-//Function to calculate the correction-values for each axis
+// Function to calculate the correction-values for each axis
 void inititalizeGyroscope(int _sampleSize)
 {
   float corrValX = 0;
@@ -113,12 +113,12 @@ void inititalizeGyroscope(int _sampleSize)
 }
 
 
-//Function to read the gyro and subtract the correction-values
+// Function to read the gyro and subtract the correction-values
 void readCorrectedGyro()
 {
   if (IMU.gyroAvailable()) 
   {
-     //vertical mode switches and inverses axis accordingly
+     // Vertical mode switches and inverses axis accordingly
     if(verticalMode)
     {
         IMU.readGyro(anglespeedVect.z,anglespeedVect.x,anglespeedVect.y);
@@ -132,12 +132,12 @@ void readCorrectedGyro()
   }
 }
 
-// read current acceleration
+// Read current acceleration
 void readAccelerometer()
 {
   if (IMU.accelAvailable())
   {
-     //vertical mode switches and inverses axis accordingly
+     // Vertical mode switches and inverses axis accordingly
     if(verticalMode)
     {
         IMU.readAccel(accelVect.z,accelVect.x,accelVect.y);
@@ -150,7 +150,7 @@ void readAccelerometer()
   }
 }
 
-//calculate X,Y eulerangles of a given vector (in reference of axis) => we will have to change this
+// Calculate X,Y eulerangles of a given vector (in reference of axis) => we will have to change this
 void calculateAngelsOfVector(vec3_t _vectorIn, vec3_t* _anglesOut)
 {
  _anglesOut->x = (acosf(_vectorIn.x / _vectorIn.mag())) * 180 / PI; //(*180/pi) => convert rad in degrees
@@ -158,7 +158,7 @@ void calculateAngelsOfVector(vec3_t _vectorIn, vec3_t* _anglesOut)
  _anglesOut->z = 0; //Calculation of Z rotation is not possible 
 }
 
-//copies the accelerationvector on startup as startvector
+// Copies the accelerationvector on startup as startvector
 void initializeStartVector()
 {
   IMU.readAccel(startVect.x, startVect.y, startVect.z);
@@ -187,7 +187,7 @@ void setup()
   initializeStartVector();
 }
 
-// sets the received PID value via the setter method of the protocol handler
+// Sets the received PID value via the setter method of the protocol handler
 void setPidValue()
 {
   if (strAxis == "X")
@@ -204,7 +204,7 @@ void setPidValue()
   }
 }
 
-// gets the current PID value from received command and sends it 
+// Gets the current PID value from received command and sends it 
 // via the getter method of protocol handler
 void getPidValue()
 {
@@ -222,7 +222,7 @@ void getPidValue()
   }
 }
 
-// execute the incoming command depending on received command
+// Execute the incoming command depending on received command
 void executeIncomingCommand()
 {
   if (strCommand == chrSetPid)
@@ -237,9 +237,9 @@ void executeIncomingCommand()
 
 void loop() 
 { 
-  readCorrectedGyro(); //read gyro => outputs angularvelocity of each axis
-  readAccelerometer(); //read accelerometer => outputs the current acceleration as 3d vector
-  calculateAngelsOfVector(accelVect, &accelEulerAnglesVect); //calculates the angles of the acceleretionvector X,Y
+  readCorrectedGyro(); // Read gyro => outputs angularvelocity of each axis
+  readAccelerometer(); // Read accelerometer => outputs the current acceleration as 3d vector
+  calculateAngelsOfVector(accelVect, &accelEulerAnglesVect); // Calculates the angles of the acceleretionvector X,Y
 
   calculateCurrentAngles();
 
@@ -262,14 +262,15 @@ void loop()
     }
     else
     {
-      // adds terminator to message 
+      // Adds terminator to message 
       message[message_pos] = '\0';
+      // Ready for next parameter
       paramPosition++;
-      //delay(500);
+
       // Reset for the next message
       message_pos = 0;
 
-      // fill the incoming message into the correct string for later execution
+      // Fill the incoming message into the correct string for later execution
       switch (paramPosition)
       {
       case command:
@@ -290,15 +291,14 @@ void loop()
 
       if (inByte == cmdTerminator)
       {
-        paramPosition = 0; // reset parameter position
-        message_pos = 0; // reset message position, read for new message
-        executeIncomingCommand(); // execute the incoming command
-        //delay(1000); // do wen need a delay here??
+        paramPosition = 0; // Reset parameter position
+        message_pos = 0; // Reset message position, read for new message
+        executeIncomingCommand(); // Execute the incoming command
       }
     }
   }
 
-  //float array to send:
+  // Float array to send:
   float data[]
   {
     currentEulerAnglesVect.x,
@@ -308,7 +308,7 @@ void loop()
     accelVect.y,
     accelVect.z
   };
-  //sending float array as dataframe
+  // Sending float array as dataframe
   protocolHandler.sendDataFrame(data,6);
 
 }
