@@ -1,0 +1,45 @@
+@startuml
+skinparam dpi 300
+main "1" *-- PID_Controller
+main "1" *-- ProtocolHandler
+
+package "imported libraries" #DDDDDD
+{
+main -- vector_type
+main -- Arduino_LSM9DS1
+}
+
+class main 
+{
+  setup() 
+  loop() 
+  calculateCurrentAngles()
+  inititalizeGyroscope()
+  readCorrectedGyro()
+  readAccelerometer()
+  calculateAngelsOfVector()
+  setPidValue()
+  getPidValue()
+  executeIncomingCommand()
+}
+
+class PID_Controller 
+{
+  processError()
+  setPID_P()  
+  setPID_I()
+  setPID_D()
+  getPid()
+  getPid()
+  getPid()
+}
+
+class ProtocolHandler 
+{
+  setterPidValue()
+  getterPidValue()
+  sendFrame()
+  sendDataFrame()
+}
+
+@enduml
