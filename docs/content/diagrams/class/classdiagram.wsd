@@ -5,8 +5,8 @@ main "1" *-- ProtocolHandler
 
 package "imported libraries" #DDDDDD
 {
-main -- vector_type
-main -- Arduino_LSM9DS1
+main -- vector_type: use
+main -- Arduino_LSM9DS1: use
 }
 
 class main 

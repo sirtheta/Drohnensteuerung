@@ -40,6 +40,13 @@
 
 \subsection{Beschreibung der Klassen und Funktionen}
 In diesem Kapitel werden die benutzten Klassen und deren Funktion kurz beschrieben.
+\subsubsection{Vector\_type}
+Bibliothek für 3D-Vektoren und Quaternionen. Einfache Bibliothek, die Strukturen für einen 3D-Vektor und eine 4D-Quaternion enthält. Alle grundlegenden Operationen sind zusammen mit Rotationen enthalten.
+
+\subsubsection{Arduino\_LSM9DS1}
+Bibliothek um die Accelerometer, Magnetometer und gyroscope Daten des LSM9DS1 IMU vom Arduino auszulesen. Die Magnetometer-Daten haben wir für dieses Projekt nicht verwendet.
+
+
 \subsubsection{''main'' Klasse}
 Die ''main'' Klasse ist die hauptklasse welche alle anderen Klassen Importiert. Hier befindet sich ebenfalls die setup() Funktion und die loop() Funktion welche im Arduino vorgeben sind.
 
@@ -61,13 +68,13 @@ Die ''main'' Klasse ist die hauptklasse welche alle anderen Klassen Importiert. 
     initializeGyroscope() &
     Mit dieser Funktion wird das Gyroskop beim einschalten initialisiert und kalibriert.\\
     \hline
-    calculateCurrentAngles() &
+    readAccelerometer() &
     \\
     \hline
     readCorrectetGyro() &
     \\
     \hline
-    readAcceletometer() &
+    calculateCurrentAngles() &
     \\
     \hline
     calculateAnglesOfVector() &
@@ -109,7 +116,7 @@ TODO
 
 
 \subsubsection{ProtocolHandler}
-Mit dem ProtocolHandler wird das sende und empfangsprotokoll zum Steuern des Gamedemos kontrolliert.
+Mit dem ProtocolHandler wird das sende und empfangsprotokoll zum Steuern der Gamedemo kontrolliert.
 \begin{table}[H]
   \centering
   \settowidth\tymin{sendPIDToSerial()}
