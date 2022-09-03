@@ -101,7 +101,11 @@ Die ''main'' Klasse ist die hauptklasse welche alle anderen Klassen Importiert. 
 \end{table}
 
 \subsubsection{PID Controller}
-TODO
+Die PID Controller werden zur glättung der Sensorsignale verwendet.\\
+Je nach Situation, wird aus den Gyroskop oder Beschleunigungsdaten ein Fehler berechnet. 
+Dieser Fehler beschreibt die Diskrepanz zwischen der theoretischen und der von den Sensoren ausgelesenen Orientation des Boards.
+Mit Hilfe der PID Controller wird nun die theoretische Orientation entsprechend den Sensordaten angepasst.
+Der PID-Algorythmus wird hier als eine Art Filter eingesetzt und glättet somit fehlerhafte Sensordaten etwas aus.\
 \begin{table}[H]
   \centering
   \settowidth\tymin{processError()}
@@ -111,7 +115,7 @@ TODO
     \textbf{Funktion} &
     \textbf{Beschreibung}\\
     \hline
-    processError() & \\
+    processError() & Ein Fehler wird als Input eingegeben und durchläuft den PID Algorythmus\\
     \hline
     setPID\_() & Setzt den eingehenden Wert einsprechend für P, I oder D. \\
     \hline
