@@ -15,5 +15,6 @@ participant "Demo Game"         as game
 client -> game: connect()
 game -> game: establishSerialConnection()
 game --> client: connectionState()
-main -> game: inititalizeGyroscope()
+main -> main: inititalizeGyroscope()
+main -> game: send initialyzing state
 @enduml

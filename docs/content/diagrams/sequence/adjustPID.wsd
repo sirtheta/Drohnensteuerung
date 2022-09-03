@@ -18,17 +18,18 @@ participant "Demo Game"         as game
 ' readPID
 '===========================
 client -> game: readPID()
-game -> main: requestPID()
+game -> game: requestPID()
+game -> main: send request
 main -> protocol: getPIDValue()
 protocol -> pid: getPID()
-pid --> protocol: returnPID()
-protocol --> game: sendRequestedPID()
+pid --> protocol: return PID
+protocol --> game: send requested PID
 
 '===========================
 ' setPID
 '===========================
 client -> game: setPID()
-game -> main: sendPIDValue()
+game --> main: send PID value
 main -> protocol: setPIDValue()
 protocol -> pid: setValue()
 @enduml
