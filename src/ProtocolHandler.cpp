@@ -67,17 +67,6 @@ void ProtocolHandler::sendPIDToSerial(float _fVal, String _strAxis, String _strP
                 String(cmdTerminator));
 }
 
-// sends the frame with the inputs via serial
-void ProtocolHandler::sendFrame(float fValue, String strAxis, String strCommand)
-{
-  Serial.println(strCommand + 
-                 paramSeparator + 
-                 strAxis + 
-                 paramSeparator +
-                 fValue + 
-                 cmdTerminator);
-}
-
 //sends a float array
 void ProtocolHandler::sendDataFrame(float _iData[], int _iDataLength)
 {
