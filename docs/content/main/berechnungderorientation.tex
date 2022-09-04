@@ -7,8 +7,7 @@ Ursprünglich haben wir geplant, dass wir anhand der Gyroskop-Daten
 (Das Gyroskop gibt die aktuellen Winkelgeschwindigkeiten für jede Drehachse in Grad/Sekunde aus) 
 die aktuellen Winkel wie folgt berechnen können:\\
 
-Die aktuellen Winkel (\begin{math}CurrAngle_{x,y,z}\end{math}) werden zu begin mit 0 initialisiert, In der loop-Funktion des Arduinos 
-werden die aktuellen Winkel mit dem Produkt aus der Winkelgeschwindikeit (\begin{math}v_{x,y,z}\end{math}) und dem Zeitdelta (\begin{math}\Delta{t}\end{math}) addiert.\\
+Die aktuellen Winkel (\begin{math}CurrAngle_{x,y,z}\end{math}) werden zu begin mit 0 initialisiert, In der loop-Funktion des Arduinos werden die aktuellen Winkel mit dem Produkt aus der Winkelgeschwindikeit (\begin{math}v_{x,y,z}\end{math}) und dem Zeitdelta (\begin{math}\Delta{t}\end{math}) addiert.\\
 
 \begin{math}
   CurrAngle_x = CurrAngle_x + v_x \Delta t  \\
@@ -26,7 +25,7 @@ Mit Hilfe der Kalibrierungsfunktion konnten wir bereits etwas genauere Resultate
 
 \subsubsection{PID-Loop}
 PID-Loops, PID-Controller oder auch PID Regler sind häufig in der Regelungstechnik anzutreffen.\\
-Sie werden hauptsächlich eingesetzt um fehler zu korrigieren und dabei das überschiessen und das daraus folgene Oszilieren zu verhindern.\\
+Sie werden hauptsächlich eingesetzt um Fehler zu korrigieren und dabei das überschiessen und das daraus folgende Oszillieren zu verhindern.\\
 
 \begin{figure}[H]
 \centering
