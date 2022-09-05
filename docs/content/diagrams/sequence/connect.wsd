@@ -12,9 +12,18 @@ end box
 end box
 participant "Demo Game"         as game
 
-client -> game: connect()
-game -> game: establishSerialConnection()
-game --> client: connectionState()
+client -> game: connect(baudrate,portname)
+game -> game: AccessSerialPort()
+game -> main: Setup()
 main -> main: inititalizeGyroscope()
+main --> game: Calibration Steps
+game -> game: DisplaySerial()
+loop
+main -> main: calculateAngles()
+main -> main: sendDataFrame()
+main --> game: Frame
+game -> game: DisplaySerial()
+end
+game --> client: connectionState()
 main -> game: send initialyzing state
 @enduml
