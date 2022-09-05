@@ -2,7 +2,7 @@
 Die Berechnung der aktuellen Orientation des Arduinos war eine grössere Herausforderung,
 als wir dies im Vorfeld geplant hatten. Das Problem war hauptsächlich, dass das Gyroskop, welches auf dem SOC verbaut wird, nicht sehr genaue Werte ausgibt.
 
-\subsubsection{Ursprüngliche Vorgehensweise}
+\subsubsection{Ursprünglicher Lösungsansatz (Gyroskop)}
 Ursprünglich haben wir geplant, dass wir anhand der Gyroskop-Daten 
 (Das Gyroskop gibt die aktuellen Winkelgeschwindigkeiten für jede Drehachse in Grad/Sekunde aus) 
 die aktuellen Winkel wie folgt berechnen können:\\
@@ -20,6 +20,11 @@ Um diese Problematik etwas in den Griff zu bekommen, haben wir eine Kalibrierung
 Zum Kalibrieren darf der Arduino nicht bewegt werden. In der Funktion werden nun 500 mal die Gyroskopdaten abgefragt.
 Der Durchschnittswert dieser Daten wird anschliessend von zukünftigen Messungen abgezogen.
 Mit Hilfe der Kalibrierungsfunktion konnten wir bereits etwas genauere Resultate erzielen, brauchbar waren diese jedoch  noch nicht.
+
+\subsubsection{Erweiterter Lösungsansatz (Beschleunigungssensor)}
+Da wir durch das Gyroskop keine genauen Winkel-Werte berechnen konnten, haben wir einen weiteren Lösungsansatz ins Auge gefasst:\\
+Durch den Beschleunigungssensor können wir den aktuellen Beschleunigungsvektor auslesen. Solange der Beschleunigungssensor nicht künstlich beschleunigt wird, 
+so zeigt dieser Vektor mit Länge (\begin{math}9.81\frac{m}{s^2}\end{math}) immer richtung Erdmitte. Anhand des Vektors können wir nun die aktuellen Winkelangaben (mit einigen Einschränkungen) sehr genau berechnen.
 
 
 
