@@ -26,6 +26,26 @@ Da wir durch das Gyroskop keine genauen Winkel-Werte berechnen konnten, haben wi
 Durch den Beschleunigungssensor können wir den aktuellen Beschleunigungsvektor auslesen. Solange der Beschleunigungssensor nicht künstlich beschleunigt wird, 
 so zeigt dieser Vektor mit Länge (\begin{math}9.81\frac{m}{s^2}\end{math}) immer richtung Erdmitte. Anhand des Vektors können wir nun die aktuellen Winkelangaben (mit einigen Einschränkungen) sehr genau berechnen.
 
+\begin{math}
+ang_x = \arccos{\frak{vect_x}{\lvert\overrightarrow{vect}\rvert}}
+ang_y = \arccos{\frak{vect_y}{\lvert\overrightarrow{vect}\rvert}}
+\end{math}
+
+Die Einschränkungen dieser Methodik liegen auf der Hand, so können die Winkel wie gesagt nur berechnet werden sofern der Arduino in nocht horizontal oder vertikal beschläunigt wird.
+Des weiteren ist es nicht möglich die Rotation in der Z-Achse (Senkrecht zur Erdmitte) zu berechnen.\\
+Um die Rotation in der Z-Achse berechnen zu können, müssten wir einen weiteren Sensor hinzuziehen: den Magnetometer. 
+In unserem Projekt haben wir jedoch aufgrund des Zeitmangels darauf verzichtet und uns mit den X und Y werten begnügt.\\
+Das Problem der Beschleunigung konnten wir jedoch fast komplett in den Griff bekommen.
+
+\subsubsection{Definitiver Lösungsansatz}
+Durch berechnen der Winkel mittels des Beschleunigungssensors konnten wir nun ziemlich genaue Resultate erzielen, solange der Arduino nicht bewegt wird.
+In unserem definitiven Lösungsansatz haben wir dieses Problem wie folgt lösen können:\\
+Wie bereits gesagt, hat der Vektor der Beschleunigung im Ruhezustand einen Betrag von 1G, ist dieser Betrag höher oder tiefer, so wird der Aruino beschleunigt.
+Diese Erkenntnis haben wir genutzt um eben dies zu bestimmen, so berechnen wir die Winkel anhand des Beschleunigungssensors nur, wenn dieser nicht künstlich beschleunigt wird.
+Ansonsten nehmen wier die Daten des Gyroskops um eine Schätzung vorzunehmen.
+Damit die Bewegungen geglättet werden, haben wir ausserdem sogenannte PID-Loops verwendet.
+
+
 
 
 \subsubsection{PID-Loop}
