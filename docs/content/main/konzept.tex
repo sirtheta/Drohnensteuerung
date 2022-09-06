@@ -75,17 +75,17 @@ Die ''main'' Klasse ist die hauptklasse welche alle anderen Klassen Importiert. 
     initializeGyroscope() &
     Mit dieser Funktion wird das Gyroskop beim einschalten initialisiert und kalibriert.\\
     \hline
-    readAccelerometer() &
-    \\
+    readAccelerometer() & 
+    Lesen der Beschleunigungssensordaten.\\
     \hline
-    readCorrectetGyro() &
-    \\
+    readCorrectetGyro() & 
+    Funktion zum Lesen der Gyrodaten und Subtrahieren der Korrekturwerte\\
     \hline
-    calculateCurrentAngles() &
-    \\
+    calculateCurrentAngles() & 
+    Aktuelle Winkel aus den Gyrodaten berechnen.\\
     \hline
-    calculateAnglesOfVector() &
-    \\
+    calculateAnglesOfVector() & 
+    Berechnen der X-, Y-Eulerwinkel eines gegebenen Vektors (in Bezug auf die Achse) \\
     \hline
     executeIncomingCommand() &
     Diese Funktion wertet den eingegangenen Befehl aus und führt anschliessend die entsprechende Funktion aus.\\
@@ -100,12 +100,13 @@ Die ''main'' Klasse ist die hauptklasse welche alle anderen Klassen Importiert. 
   \caption{Beschreibung der ''main'' Klasse}
 \end{table}
 
+\newpage
 \subsubsection{PID Controller}
-Die PID Controller werden zur glättung der Sensorsignale verwendet.\\
+Die PID Controller werden zur Glättung der Sensorsignale verwendet.\\
 Je nach Situation, wird aus den Gyroskop oder Beschleunigungsdaten ein Fehler berechnet. 
 Dieser Fehler beschreibt die Diskrepanz zwischen der theoretischen und der von den Sensoren ausgelesenen Orientation des Boards.
 Mit Hilfe der PID Controller wird nun die theoretische Orientation entsprechend den Sensordaten angepasst.
-Der PID-Algorythmus wird hier als eine Art Filter eingesetzt und glättet somit fehlerhafte Sensordaten etwas aus.\
+Der PID-Algorithmus wird hier als eine Art Filter eingesetzt und glättet somit fehlerhafte Sensordaten etwas aus.\
 \begin{table}[H]
   \centering
   \settowidth\tymin{processError()}
@@ -115,7 +116,7 @@ Der PID-Algorythmus wird hier als eine Art Filter eingesetzt und glättet somit 
     \textbf{Funktion} &
     \textbf{Beschreibung}\\
     \hline
-    processError() & Ein Fehler wird als Input eingegeben und durchläuft den PID Algorythmus\\
+    processError() & Ein Fehler wird als Input eingegeben und durchläuft den PID Algorithmus\\
     \hline
     setPID\_() & Setzt den eingehenden Wert einsprechend für P, I oder D. \\
     \hline
