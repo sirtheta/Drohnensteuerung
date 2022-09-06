@@ -17,22 +17,22 @@ Die aktuellen Winkel (\begin{math}CurrAngle_{x,y,z}\end{math}) werden zu begin m
 
 Diese Methodik hat jedoch dazu geführt, dass die Winkel, durch die Ungenauigkeit der Daten, schon nach kurzer Zeit davon driften.
 Um diese Problematik etwas in den Griff zu bekommen, haben wir eine Kalibrierungsfunktion implementiert, welche beim Starten des Arduinos durchloffen wird.
-Zum Kalibrieren darf der Arduino nicht bewegt werden. In der Funktion werden nun 500 mal die Gyroskopdaten abgefragt.
+Zum Kalibrieren darf der Arduino nicht bewegt werden. In der Funktion werden nun 500-mal die Gyroskopdaten abgefragt.
 Der Durchschnittswert dieser Daten wird anschliessend von zukünftigen Messungen abgezogen.
 Mit Hilfe der Kalibrierungsfunktion konnten wir bereits etwas genauere Resultate erzielen, brauchbar waren diese jedoch  noch nicht.
 
 \subsubsection{Erweiterter Lösungsansatz (Beschleunigungssensor)}
 Da wir durch das Gyroskop keine genauen Winkel-Werte berechnen konnten, haben wir einen weiteren Lösungsansatz ins Auge gefasst:\\
 Durch den Beschleunigungssensor können wir den aktuellen Beschleunigungsvektor auslesen. Solange der Beschleunigungssensor nicht künstlich beschleunigt wird, 
-so zeigt dieser Vektor mit Länge (\begin{math}9.81\frac{m}{s^2}\end{math}) immer richtung Erdmitte. Anhand des Vektors können wir nun die aktuellen Winkelangaben (mit einigen Einschränkungen) sehr genau berechnen.
+so zeigt dieser Vektor mit Länge (\begin{math}9.81\frac{m}{s^2}\end{math}) immer Richtung Erdmitte. Anhand des Vektors können wir nun die aktuellen Winkelangaben (mit einigen Einschränkungen) sehr genau berechnen.
 
 \begin{math}
-ang_x = \arccos{\frak{vect_x}{\lvert\overrightarrow{vect}\rvert}}
-ang_y = \arccos{\frak{vect_y}{\lvert\overrightarrow{vect}\rvert}}
+ang_x = arccos{\frac{vect_x}{\lvert\overrightarrow{vect}\rvert}}
+ang_y = arccos{\frac{vect_y}{\lvert\overrightarrow{vect}\rvert}}
 \end{math}
 
-Die Einschränkungen dieser Methodik liegen auf der Hand, so können die Winkel wie gesagt nur berechnet werden sofern der Arduino in nocht horizontal oder vertikal beschläunigt wird.
-Des weiteren ist es nicht möglich die Rotation in der Z-Achse (Senkrecht zur Erdmitte) zu berechnen.\\
+Die Einschränkungen dieser Methodik liegen auf der Hand, so können die Winkel wie gesagt nur berechnet werden, sofern der Arduino in nicht horizontal oder vertikal beschleunigt wird.
+Des Weiteren ist es nicht möglich die Rotation in der Z-Achse (Senkrecht zur Erdmitte) zu berechnen.\\
 Um die Rotation in der Z-Achse berechnen zu können, müssten wir einen weiteren Sensor hinzuziehen: den Magnetometer. 
 In unserem Projekt haben wir jedoch aufgrund des Zeitmangels darauf verzichtet und uns mit den X und Y werten begnügt.\\
 Das Problem der Beschleunigung konnten wir jedoch fast komplett in den Griff bekommen.
@@ -40,16 +40,15 @@ Das Problem der Beschleunigung konnten wir jedoch fast komplett in den Griff bek
 \subsubsection{Definitiver Lösungsansatz}
 Durch berechnen der Winkel mittels des Beschleunigungssensors konnten wir, solange der Arduino nicht bewegt wird, ziemlich genaue Resultate erzielen.
 In unserem definitiven Lösungsansatz haben wir das Problem der Bewegung wie folgt lösen können:\\
-Wie bereits gesagt, hat der Vektor der Beschleunigung im Ruhezustand einen Betrag von 1G, ist dieser Betrag höher oder tiefer, so wird der Aruino beschleunigt.
+Wie bereits gesagt, hat der Vektor der Beschleunigung im Ruhezustand einen Betrag von 1G, ist dieser Betrag höher oder tiefer, so wird der Arduino beschleunigt.
 somit berechnen wir die Winkel anhand des Beschleunigungssensors nur, wenn dieser nicht künstlich beschleunigt wird.
-Ansonsten nehmen wier die Daten des Gyroskops um eine Schätzung vorzunehmen.
+Ansonsten nehmen wir die Daten des Gyroskops, um eine Schätzung vorzunehmen.
 Damit die Bewegungen geglättet werden, haben wir ausserdem sogenannte PID-Loops verwendet.
-
 
 
 \subsubsection{PID-Loop}
 PID-Loops, PID-Controller oder auch PID Regler sind häufig in der Regelungstechnik anzutreffen.\\
-Sie werden hauptsächlich eingesetzt um Fehler zu korrigieren und dabei das überschiessen und das daraus folgende Oszillieren zu verhindern.\\
+Sie werden hauptsächlich eingesetzt, um Fehler zu korrigieren und dabei das Überschiessen und das daraus folgende Oszillieren zu verhindern.\\
 
 \begin{figure}[H]
 \centering
@@ -78,16 +77,15 @@ Sie werden hauptsächlich eingesetzt um Fehler zu korrigieren und dabei das übe
 \end{figure}
 
 In unserem Projekt verwenden wir für alle Drehachsen des Arduinos jeweils ein PID-Loop. 
-Die Sensordaten werden nicht direkt in einen Output verwandelt, statt dessen werden sie zum Korriegieren der aktuellen Winkel, welche zwischengespeichert werden, verwendet.
-Wie bereits im Lösungsansatz beschrieben, verwenden wir je nach dem ob eine Beschleunigung vorliegt die Gyro- oder Beschleunigungsdaten\\
-Werden die Beschleunigungsdaten verwendet so wird der Fehler welcher durch den PID-Loop verarbeidet wird folgendermassen berrechnet:
+Die Sensordaten werden nicht direkt in einen Output verwandelt, stattdessen werden sie zum Korriegieren der aktuellen Winkel, welche zwischengespeichert werden, verwendet.
+Wie bereits im Lösungsansatz beschrieben, verwenden wir je nachdem ob eine Beschleunigung vorliegt die Gyro- oder Beschleunigungsdaten\\
+Werden die Beschleunigungsdaten verwendet so wird der Fehler, welcher durch den PID-Loop verarbeitet wird folgendermassen berechnet:
 
 \begin{math} err_[x,y] = accelAngle_[x,y] - currAngle_[x,y] \end{math}
 
-Werden hingegen die Gyroskopdaten verwendet so kann als Fehler die Winkelgeschwindikeit im Delta der Zeit verwendet werden.
+Werden hingegen die Gyroskopdaten verwendet so kann als Fehler die Winkelgeschwindigkeit im Delta der Zeit verwendet werden.
 
 \begin{math} err_[x,y] = wV_[x,y]\Delta{t}\end{math}
-
 
 
 
@@ -97,7 +95,6 @@ Werden hingegen die Gyroskopdaten verwendet so kann als Fehler die Winkelgeschwi
     \caption{PID Loop}
   \end{center}
 \end{figure}
-
 
   
 \subsubsection{PID-Algorythmus}
@@ -131,4 +128,3 @@ Werden hingegen die Gyroskopdaten verwendet so kann als Fehler die Winkelgeschwi
   \caption{Variablen Verzeichnis}
 \end{table}
 \end{minipage}
-
