@@ -38,13 +38,12 @@ In unserem Projekt haben wir jedoch aufgrund des Zeitmangels darauf verzichtet u
 Das Problem der Beschleunigung konnten wir jedoch fast komplett in den Griff bekommen.
 
 \subsubsection{Definitiver Lösungsansatz}
-Durch berechnen der Winkel mittels des Beschleunigungssensors konnten wir nun ziemlich genaue Resultate erzielen, solange der Arduino nicht bewegt wird.
-In unserem definitiven Lösungsansatz haben wir dieses Problem wie folgt lösen können:\\
+Durch berechnen der Winkel mittels des Beschleunigungssensors konnten wir, solange der Arduino nicht bewegt wird, ziemlich genaue Resultate erzielen.
+In unserem definitiven Lösungsansatz haben wir das Problem der Bewegung wie folgt lösen können:\\
 Wie bereits gesagt, hat der Vektor der Beschleunigung im Ruhezustand einen Betrag von 1G, ist dieser Betrag höher oder tiefer, so wird der Aruino beschleunigt.
-Diese Erkenntnis haben wir genutzt um eben dies zu bestimmen, so berechnen wir die Winkel anhand des Beschleunigungssensors nur, wenn dieser nicht künstlich beschleunigt wird.
+somit berechnen wir die Winkel anhand des Beschleunigungssensors nur, wenn dieser nicht künstlich beschleunigt wird.
 Ansonsten nehmen wier die Daten des Gyroskops um eine Schätzung vorzunehmen.
 Damit die Bewegungen geglättet werden, haben wir ausserdem sogenannte PID-Loops verwendet.
-
 
 
 
@@ -79,6 +78,16 @@ Sie werden hauptsächlich eingesetzt um Fehler zu korrigieren und dabei das übe
 \end{figure}
 
 In unserem Projekt verwenden wir für alle Drehachsen des Arduinos jeweils ein PID-Loop. 
+Die Sensordaten werden nicht direkt in einen Output verwandelt, statt dessen werden sie zum Korriegieren der aktuellen Winkel, welche zwischengespeichert werden, verwendet.
+Wie bereits im Lösungsansatz beschrieben, verwenden wir je nach dem ob eine Beschleunigung vorliegt die Gyro- oder Beschleunigungsdaten\\
+Werden die Beschleunigungsdaten verwendet so wird der Fehler welcher durch den PID-Loop verarbeidet wird folgendermassen berrechnet:
+
+\begin{math} err_[x,y] = accelAngle_[x,y] - currAngle_[x,y] \end{math}
+
+Werden hingegen die Gyroskopdaten verwendet so kann als Fehler die Winkelgeschwindikeit im Delta der Zeit verwendet werden.
+
+\begin{math} err_[x,y] = wV_[x,y]\Delta{t}\end{math}
+
 
 
 
