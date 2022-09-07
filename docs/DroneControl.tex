@@ -7,6 +7,7 @@
 \definecolor{codegray}{rgb}{0.5,0.5,0.5}
 \definecolor{backcolour}{rgb}{0.95,0.95,0.92}
 
+% set listing for c++ codeblocks
 \lstset { %
     language=C++,
     backgroundcolor=\color{black!5}, % set backgroundcolor
@@ -30,7 +31,7 @@
 \begin{document}
 \input{ads/mainpage}
 %sets the space between text and footer
-%\addtolength{\skip\footins}{2pc plus 5pt}
+
 \setlength{\skip\footins}{3pc plus 5pt minus 2pt}
 
 \setlength\arrayrulewidth{1.1pt}
@@ -47,15 +48,11 @@
 \lfoot{\footnotesize \arbeit, \autorS, \autorM, {\the\year}}
 \pagenumbering{arabic}
 \setcounter{page}{1}
-% Lebenslauf einfügen
-%\includepdf[pages=-,addtotoc={1, section, 1, Lebenslauf, L1:1}]{Lebenslauf.pdf}
+
 \input{content/main/situationsanalyse.tex}
 \input{content/main/konzept.tex}
 \input{content/main/implementation.tex}
 \input{content/main/ablage.tex}
-
-%% eigenstaendigkeitserklaerung einfügen
-%\input{content/main/eigenstaendigkeitserklaerung.tex}
 
 % Abbildungsverzeichnis
 \newpage 
@@ -73,8 +70,4 @@
 % \clearpage
 % \bibliographystyle{agsm}
 % \bibliography{ArbeitBib}
-
-% Diplomantrag einfügen
-%\includepdf[pages=-,addtotoc={1, section, 1, Projektantrag Diplomarbeit, L1:1}]{TE_2022_Neuhaus Michael.pdf}
-
 \end{document}

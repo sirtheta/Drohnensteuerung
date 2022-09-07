@@ -3,7 +3,7 @@
 skinparam dpi 300
 left to right direction
 actor "Human" as human
-rectangle "Drone controller" {
+rectangle "Drone controller" as ctrl {
   usecase "Move controller" as UC1
   usecase "set PID" as UC2
   usecase "read PID" as UC4
@@ -14,8 +14,10 @@ rectangle "Demo game" as game {
   usecase "read PID" as inc1
   usecase "set PID" as inc2
   usecase "connect/ \n disconect" as UC5
+  usecase "move Drone" as dr
 }
 
+ctrl --> dr
 human -- UC1
 UC2 -- game
 UC4 -- game
