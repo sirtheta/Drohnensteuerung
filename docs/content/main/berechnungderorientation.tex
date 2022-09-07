@@ -26,10 +26,12 @@ Da wir durch das Gyroskop keine genauen Winkel-Werte berechnen konnten, haben wi
 Durch den Beschleunigungssensor können wir den aktuellen Beschleunigungsvektor auslesen. Solange der Beschleunigungssensor nicht künstlich beschleunigt wird, 
 so zeigt dieser Vektor mit Länge (\begin{math}9.81\frac{m}{s^2}\end{math}) immer Richtung Erdmitte. Anhand des Vektors können wir nun die aktuellen Winkelangaben (mit einigen Einschränkungen) sehr genau berechnen.
 
+\vspace{5mm}
 \begin{math}
-ang_x = arccos{\frac{vect_x}{\lvert\overrightarrow{vect}\rvert}}
+ang_x = arccos{\frac{vect_x}{\lvert\overrightarrow{vect}\rvert}}\\
 ang_y = arccos{\frac{vect_y}{\lvert\overrightarrow{vect}\rvert}}
 \end{math}
+\vspace{5mm}
 
 Die Einschränkungen dieser Methodik liegen auf der Hand, so können die Winkel wie gesagt nur berechnet werden, sofern der Arduino in nicht horizontal oder vertikal beschleunigt wird.
 Des Weiteren ist es nicht möglich die Rotation in der Z-Achse (Senkrecht zur Erdmitte) zu berechnen.\\
@@ -78,15 +80,18 @@ Sie werden hauptsächlich eingesetzt, um Fehler zu korrigieren und dabei das Üb
 
 In unserem Projekt verwenden wir für alle Drehachsen des Arduinos jeweils ein PID-Loop. 
 Die Sensordaten werden nicht direkt in einen Output verwandelt, stattdessen werden sie zum Korriegieren der aktuellen Winkel, welche zwischengespeichert werden, verwendet.
-Wie bereits im Lösungsansatz beschrieben, verwenden wir je nachdem ob eine Beschleunigung vorliegt die Gyro- oder Beschleunigungsdaten\\
+Wie bereits im Lösungsansatz beschrieben, verwenden wir je nachdem ob eine Beschleunigung vorliegt die Gyro- oder Beschleunigungsdaten.\\
 Werden die Beschleunigungsdaten verwendet so wird der Fehler, welcher durch den PID-Loop verarbeitet wird folgendermassen berechnet:
 
-\begin{math} err_[x,y] = accelAngle_[x,y] - currAngle_[x,y] \end{math}
+\vspace{5mm}
+\begin{math} err_{x,y} = accelAngle_{x,y} - currAngle_{x,y} \end{math}
+\vspace{5mm}
 
 Werden hingegen die Gyroskopdaten verwendet so kann als Fehler die Winkelgeschwindigkeit im Delta der Zeit verwendet werden.
 
-\begin{math} err_[x,y] = wV_[x,y]\Delta{t}\end{math}
-
+\vspace{5mm}
+\begin{math} err_{x,y} = wV_{x,y}\Delta{t}\end{math}
+\vspace{5mm}
 
 
 \begin{figure}[H]
@@ -114,7 +119,7 @@ Werden hingegen die Gyroskopdaten verwendet so kann als Fehler die Winkelgeschwi
     \hline
     \begin{math} K_i \end{math} & Integral-Konstante\\
     \hline
-    \begin{math} K_d \end{math} & Ableitung-Konstante\\
+    \begin{math} K_d \end{math} & Differential-Konstante\\
     \hline
     \begin{math} e(t) \end{math} & aktueller Fehler\\
     \hline
