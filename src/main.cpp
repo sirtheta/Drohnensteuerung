@@ -60,7 +60,7 @@ enum Param
 };
 
 // Function to calculate the current angles
-void calculateCurrentAngles()
+void calculateCurrentAngles() das
 {
   delay(5);
 
@@ -88,7 +88,7 @@ void calculateCurrentAngles()
 }
 
 // Function to calculate the correction-values for each axis
-void inititalizeGyroscope(int _sampleSize)
+void inititalizeGyroscope(int _sampleSize) 
 {
   float corrValX = 0;
   float corrValY = 0;
@@ -112,7 +112,6 @@ void inititalizeGyroscope(int _sampleSize)
   IMU.setGyroOffset(corrValX,corrValY,corrValZ);
 }
 
-
 // Function to read the gyro and subtract the correction-values
 void readCorrectedGyro()
 {
@@ -127,8 +126,7 @@ void readCorrectedGyro()
     else
     {
       IMU.readGyro(anglespeedVect.x,anglespeedVect.y,anglespeedVect.z);
-    }    
-    
+    }        
   }
 }
 
@@ -150,12 +148,12 @@ void readAccelerometer()
   }
 }
 
-// Calculate X,Y eulerangles of a given vector (in reference of axis) => we will have to change this
+// Calculate X,Y eulerangles of a given vector (in reference of axis)
 void calculateAngelsOfVector(vec3_t _vectorIn, vec3_t* _anglesOut)
 {
- _anglesOut->x = (acosf(_vectorIn.x / _vectorIn.mag())) * 180 / PI; //(*180/pi) => convert rad in degrees
- _anglesOut->y = (acosf(_vectorIn.y / _vectorIn.mag())) * 180 / PI; //(*180/pi) => convert rad in degrees
- _anglesOut->z = 0; //Calculation of Z rotation is not possible 
+  _anglesOut->x = (acosf(_vectorIn.x / _vectorIn.mag())) * 180 / PI; //(*180/pi) => convert rad in degrees
+  _anglesOut->y = (acosf(_vectorIn.y / _vectorIn.mag())) * 180 / PI; //(*180/pi) => convert rad in degrees
+  _anglesOut->z = 0; //Calculation of Z rotation is not possible 
 }
 
 // Copies the accelerationvector on startup as startvector
