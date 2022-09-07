@@ -9,11 +9,11 @@ die aktuellen Winkel wie folgt berechnen können:\\
 
 Die aktuellen Winkel (\begin{math}CurrAngle_{x,y,z}\end{math}) werden zu begin mit 0 initialisiert, In der loop-Funktion des Arduinos werden die aktuellen Winkel mit dem Produkt aus der Winkelgeschwindikeit (\begin{math}v_{x,y,z}\end{math}) und dem Zeitdelta (\begin{math}\Delta{t}\end{math}) addiert.\\
 
-\begin{math}
+\begin{gather*}
   CurrAngle_x = CurrAngle_x + v_x \Delta t  \\
   CurrAngle_y = CurrAngle_y + v_y \Delta t  \\
   CurrAngle_z = CurrAngle_z + v_z \Delta t  \\
-\end{math}
+\end{gather*}
 
 Diese Methodik hat jedoch dazu geführt, dass die Winkel, durch die Ungenauigkeit der Daten, schon nach kurzer Zeit davon driften.
 Um diese Problematik etwas in den Griff zu bekommen, haben wir eine Kalibrierungsfunktion implementiert, welche beim Starten des Arduinos durchloffen wird.
@@ -21,17 +21,26 @@ Zum Kalibrieren darf der Arduino nicht bewegt werden. In der Funktion werden nun
 Der Durchschnittswert dieser Daten wird anschliessend von zukünftigen Messungen abgezogen.
 Mit Hilfe der Kalibrierungsfunktion konnten wir bereits etwas genauere Resultate erzielen, brauchbar waren diese jedoch  noch nicht.
 
+\newpage
 \subsubsection{Erweiterter Lösungsansatz (Beschleunigungssensor)}
 Da wir durch das Gyroskop keine genauen Winkel-Werte berechnen konnten, haben wir einen weiteren Lösungsansatz ins Auge gefasst:\\
 Durch den Beschleunigungssensor können wir den aktuellen Beschleunigungsvektor auslesen. Solange der Beschleunigungssensor nicht künstlich beschleunigt wird, 
 so zeigt dieser Vektor mit Länge (\begin{math}9.81\frac{m}{s^2}\end{math}) immer Richtung Erdmitte. Anhand des Vektors können wir nun die aktuellen Winkelangaben (mit einigen Einschränkungen) sehr genau berechnen.
 
-\vspace{5mm}
-\begin{math}
-ang_x = arccos{\frac{vect_x}{\lvert\overrightarrow{vect}\rvert}}\\
-ang_y = arccos{\frac{vect_y}{\lvert\overrightarrow{vect}\rvert}}
-\end{math}
-\vspace{5mm}
+\begin{gather*}
+ang_{x,y} = arccos{\frac{vect_{x,y}}{\lvert\overrightarrow{vect}\rvert}}\\
+\end{gather*}  
+
+\begin{lstlisting}
+// Calculate X,Y eulerangles of a given vector (in reference of axis)
+void calculateAngelsOfVector(vec3_t _vectorIn, vec3_t* _anglesOut)
+{
+   //(*180/pi) => convert rad in degrees
+  _anglesOut->x = (acosf(_vectorIn.x / _vectorIn.mag())) * 180 / PI; 
+  _anglesOut->y = (acosf(_vectorIn.y / _vectorIn.mag())) * 180 / PI;
+  _anglesOut->z = 0; //Calculation of Z rotation is not possible 
+}
+\end{lstlisting}
 
 Die Einschränkungen dieser Methodik liegen auf der Hand, so können die Winkel wie gesagt nur berechnet werden, sofern der Arduino in nicht horizontal oder vertikal beschleunigt wird.
 Des Weiteren ist es nicht möglich die Rotation in der Z-Achse (Senkrecht zur Erdmitte) zu berechnen.\\
@@ -45,10 +54,50 @@ Durch berechnen der Winkel mittels des Beschleunigungssensors konnten wir, solan
 In unserem definitiven Lösungsansatz haben wir das Problem der Bewegung wie folgt lösen können:\\
 Wie bereits gesagt, hat der Vektor der Beschleunigung im Ruhezustand einen Betrag von 1G, ist dieser Betrag höher oder tiefer, so wird der Arduino beschleunigt.
 somit berechnen wir die Winkel anhand des Beschleunigungssensors nur, wenn dieser nicht künstlich beschleunigt wird.
+
+\vspace{3mm}
+\begin{lstlisting}
+void calculateCurrentAngles()
+{
+  delay(5);
+
+  // Flag if sensor is beeing accelerated
+  bool accelerating = !(accelVect.mag() < startVect.mag() + 
+                        thresholdVect && accelVect.mag() > 
+                        startVect.mag() - thresholdVect);
+
+  // Calculate time delta
+  float dTime = (millis() - timeStamp)/1000;
+
+  // Calculate errors
+  float xError = accelerating ? anglespeedVect.x * dTime : 
+                                accelEulerAnglesVect.x - 
+                                currentEulerAnglesVect.x;
+  float yError = accelerating ? anglespeedVect.y * dTime : 
+                                accelEulerAnglesVect.y - 
+                                currentEulerAnglesVect.y;
+
+  float zError = anglespeedVect.y * dTime;
+
+  // Running PID loops for correcting the current angles
+  xController.processError(xError, dTime);
+  yController.processError(yError, dTime);
+  zController.processError(zError, dTime);
+
+  // Applying corrections to current angles
+  currentEulerAnglesVect.x += xCorrection;
+  currentEulerAnglesVect.y += yCorrection;
+  currentEulerAnglesVect.z += zCorrection;
+
+  timeStamp = millis();
+}
+\end{lstlisting}  
+\vspace{3mm}
+
 Ansonsten nehmen wir die Daten des Gyroskops, um eine Schätzung vorzunehmen.
 Damit die Bewegungen geglättet werden, haben wir ausserdem sogenannte PID-Loops verwendet.
 
-
+\newpage
 \subsubsection{PID-Loop}
 PID-Loops, PID-Controller oder auch PID Regler sind häufig in der Regelungstechnik anzutreffen.\\
 Sie werden hauptsächlich eingesetzt, um Fehler zu korrigieren und dabei das Überschiessen und das daraus folgende Oszillieren zu verhindern.\\
@@ -80,20 +129,15 @@ Sie werden hauptsächlich eingesetzt, um Fehler zu korrigieren und dabei das Üb
 \end{figure}
 
 In unserem Projekt verwenden wir für alle Drehachsen des Arduinos jeweils ein PID-Loop. 
-Die Sensordaten werden nicht direkt in einen Output verwandelt, stattdessen werden sie zum Korriegieren der aktuellen Winkel, welche zwischengespeichert werden, verwendet.
+Die Sensordaten werden nicht direkt in einen Output verwandelt, stattdessen werden sie zum Korrigieren der aktuellen Winkel, welche zwischengespeichert werden, verwendet.
 Wie bereits im Lösungsansatz beschrieben, verwenden wir je nachdem ob eine Beschleunigung vorliegt die Gyro- oder Beschleunigungsdaten.\\
 Werden die Beschleunigungsdaten verwendet so wird der Fehler, welcher durch den PID-Loop verarbeitet wird folgendermassen berechnet:
 
-\vspace{5mm}
-\begin{math} err_{x,y} = accelAngle_{x,y} - currAngle_{x,y} \end{math}
-\vspace{5mm}
+\begin{gather*} err_{x,y} = accelAngle_{x,y} - currAngle_{x,y} \end{gather*}
 
 Werden hingegen die Gyroskopdaten verwendet so kann als Fehler die Winkelgeschwindigkeit im Delta der Zeit verwendet werden.
 
-\vspace{5mm}
-\begin{math} err_{x,y} = wV_{x,y}\Delta{t}\end{math}
-\vspace{5mm}
-
+\begin{gather*} err_{x,y} = wV_{x,y}\Delta{t}\end{gather*}
 
 \begin{figure}[H]
   \begin{center}
@@ -101,7 +145,6 @@ Werden hingegen die Gyroskopdaten verwendet so kann als Fehler die Winkelgeschwi
     \caption{PID Loop}
   \end{center}
 \end{figure}
-
   
 \subsubsection{PID-Algorythmus}
 \begin{minipage}[l]{0.5\textwidth}
@@ -134,3 +177,16 @@ Werden hingegen die Gyroskopdaten verwendet so kann als Fehler die Winkelgeschwi
   \caption{Variablen Verzeichnis}
 \end{table}
 \end{minipage}
+
+\vspace{3mm}
+\begin{lstlisting}
+  // calculate the current error
+  void PIDController::processError(float _error, float _dTime)
+  {
+    integralError += _error;
+  
+    *pOutput = p * _error + (i * integralError * _dTime) + (d * (_error - error) / _dTime);
+    
+    error = _error;
+  }  
+  \end{lstlisting}

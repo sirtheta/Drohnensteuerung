@@ -60,7 +60,7 @@ enum Param
 };
 
 // Function to calculate the current angles
-void calculateCurrentAngles() das
+void calculateCurrentAngles()
 {
   delay(5);
 
@@ -120,8 +120,8 @@ void readCorrectedGyro()
      // Vertical mode switches and inverses axis accordingly
     if(verticalMode)
     {
-        IMU.readGyro(anglespeedVect.z,anglespeedVect.x,anglespeedVect.y);
-        anglespeedVect = -anglespeedVect;
+      IMU.readGyro(anglespeedVect.z,anglespeedVect.x,anglespeedVect.y);
+      anglespeedVect = -anglespeedVect;
     }
     else
     {
@@ -138,8 +138,8 @@ void readAccelerometer()
      // Vertical mode switches and inverses axis accordingly
     if(verticalMode)
     {
-        IMU.readAccel(accelVect.z,accelVect.x,accelVect.y);
-        accelVect = -accelVect;
+      IMU.readAccel(accelVect.z,accelVect.x,accelVect.y);
+      accelVect = -accelVect;
     }
     else
     {
@@ -289,8 +289,8 @@ void loop()
 
       if (inByte == cmdTerminator)
       {
-        paramPosition = 0; // Reset parameter position
-        message_pos = 0; // Reset message position, read for new message
+        paramPosition = 0;        // Reset parameter position
+        message_pos = 0;          // Reset message position, read for new message
         executeIncomingCommand(); // Execute the incoming command
       }
     }

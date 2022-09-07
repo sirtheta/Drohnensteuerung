@@ -27,6 +27,26 @@ Das Protokoll haben wir wie folgt definiert:
     \item Der dritte char definiert welcher Wert, ob P, I oder D.
     \item Nach der letzten Pipe wird der gelesene Wert übertragen. Dieser Wert muss beim Empfänger durch 10'000 gerechnet werden, da ein float über Serial.println auf zwei Kommastellen gekürzt wird und deshalb für den Transfer mit 10'000 multipliziert als int übergeben wird.
   \end{itemize}
+  \vspace{3mm}
+  \begin{lstlisting}
+  // Send the requested PID Value via Serial
+  void ProtocolHandler::sendPIDToSerial(float _fVal, 
+                                        String _strAxis, 
+                                        String _strPidParam)
+  {
+    int iVal = _fVal * 10000; // transfer float to int because serial (string) 
+                              // will only print two digits after comma
+    Serial.println(String(chrTransferPid) + 
+                   String(paramSeparator) + 
+                   _strAxis + 
+                   String(paramSeparator) + 
+                   _strPidParam + 
+                   String(paramSeparator) + 
+                   iVal + 
+                   String(cmdTerminator));
+  }
+  \end{lstlisting}
+\newpage
   \item Senden des Data-Frames zum Steuern der Game-Demo
   \begin{itemize}
     \item Beispiel: \textbf{DATT|90.05|90.2|3.5|0.1|0.01|1.05}
@@ -35,10 +55,83 @@ Das Protokoll haben wir wie folgt definiert:
     \item Die drei letzten Werte liefern die Accelerometer-Werte für X, Y und Z
     \item DATT|X|Y|Z|X|Y|Z
   \end{itemize}
+  \vspace{3mm}
+  \begin{lstlisting}
+void ProtocolHandler::sendDataFrame(float _iData[], int _iDataLength)
+{
+  String frame = chrDataTransfer;
+
+  for(int i =0; i < _iDataLength ;i++)
+  {
+    frame = frame + paramSeparator + String(_iData[i]);
+  }
+
+  Serial.println(frame);
+}
+  \end{lstlisting}
 \end{itemize} 
 
 \subsubsection{Datenempfang}
 Um die Daten über die Serialschnittstelle empfangen zu können, wird in der loop()-Funktion geprüft ob eine Nachricht eingeht. Ist dies der Fall, wird mit Serial.read() jeder char der eingehenden Nachricht in einen Buffer abgefüllt und ausgewertet. Durch die genaue Definition des Protokolls kann dann der Befehl ausgewertet und anschliessend ausgeführt werden.
+
+\vspace{3mm}
+\begin{lstlisting}
+// Check to see if anything is available in the serial receive buffer
+while (Serial.available() > 0)
+{
+  // Create a place to hold the incoming message
+  static char message[MAX_MESSAGE_LENGTH];
+  static unsigned int message_pos = 0;
+
+  // Read the next available byte in the serial receive buffer
+  char inByte = Serial.read();
+
+  // Message coming check for pipe
+  if (inByte != paramSeparator && inByte != cmdTerminator &&
+      message_pos < MAX_MESSAGE_LENGTH - 1)
+  {
+    // Add the incoming byte to message
+    message[message_pos] = inByte;
+    message_pos++;
+  }
+  else
+  {
+    // Adds terminator to message 
+    message[message_pos] = '\0';
+    // Ready for next parameter
+    paramPosition++;
+
+    // Reset for the next message
+    message_pos = 0;
+
+    // Fill the incoming message into the correct string for later execution
+    switch (paramPosition)
+    {
+    case command:
+      strCommand = String(message);
+      break;
+    case axis:
+      strAxis = String(message);
+      break;
+    case pidParam:
+      strPidParam = String(message);
+      break;
+    case value:
+      fValue = String(message).toFloat();
+      break;
+    default:
+      break;
+    }
+
+    if (inByte == cmdTerminator)
+    {
+      paramPosition = 0;        // Reset parameter position
+      message_pos = 0;          // Reset message position, read for new message
+      executeIncomingCommand(); // Execute the incoming command
+    }
+  }
+}
+\end{lstlisting}
 
 \subsubsection{Senden der Daten}
 Die PID-Daten werden je Achse und je PID-Term separat versendet. Um die Drohne im Game zu steuern, wollten wir dies ebenfalls so implementieren, dies führte jedoch zu nicht besonders flüssigem Spielverhalten. Aus diesem Grund haben wir uns entschieden, immer alle X,Y und Z- Werte auf einmal zu versenden.

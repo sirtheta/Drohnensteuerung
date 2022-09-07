@@ -3,10 +3,28 @@
 %include all used packages
 \input{ads/definitions.tex}
 
+\definecolor{codegreen}{rgb}{0,0.6,0}
+\definecolor{codegray}{rgb}{0.5,0.5,0.5}
+\definecolor{backcolour}{rgb}{0.95,0.95,0.92}
+
 \lstset { %
     language=C++,
     backgroundcolor=\color{black!5}, % set backgroundcolor
     basicstyle=\footnotesize,% basic font setting
+    backgroundcolor=\color{backcolour},   
+    commentstyle=\color{codegreen},
+    keywordstyle=\color{blue},
+    numberstyle=\tiny\color{codegray},
+    emph={char,double,bool,String, Serial},
+    emphstyle={\color{blue}},
+    breakatwhitespace=false,                         
+    captionpos=b,                                    
+    numbers=left,                    
+    numbersep=5pt,                  
+    showspaces=false,                
+    showstringspaces=false,
+    showtabs=false,                  
+    tabsize=2
 }
 
 \begin{document}
@@ -34,6 +52,7 @@
 \input{content/main/situationsanalyse.tex}
 \input{content/main/konzept.tex}
 \input{content/main/implementation.tex}
+\input{content/main/ablage.tex}
 
 %% eigenstaendigkeitserklaerung einfügen
 %\input{content/main/eigenstaendigkeitserklaerung.tex}
